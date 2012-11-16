@@ -1,0 +1,5 @@
+django==1.4.2
+pymongo
+twilio
+geopy
+python-memcached
