@@ -20,8 +20,8 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     # url(r'^admin/', include(admin.site.urls)),
 
-    url(r'^sms$', views.sms),
-    url(r'^map_data$', views.map_data),
-    url(r'^loc_data$', views.loc_data),
-    url(r'^dummy_data$', views.dummy_data),
+    url(r'^a/sms$', views.sms),
+    url(r'^a/map_data$', views.map_data),
+    url(r'^a/loc_data$', views.loc_data),
+    url(r'^a/dummy_data$', views.dummy_data),
 )

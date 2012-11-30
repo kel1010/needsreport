@@ -15,46 +15,52 @@ body {
 #map {
 	width: auto;
 	height: 600px;
-	margin-bottom: 20px;
 }
 
 #map img {
     max-width: none;
 }
 
-#legend {
+#types {
+    background: white;
+    padding-right: 10px;
+    border-right: 2px solid #aaa;
+}
+
+#control {
 	font-size: 16px;
 	background: white;
 	padding-right: 10px;
 	border-right: 2px solid #aaa;
 }
 
-#legend div#logo {
+#controls div#logo {
 	margin: 20px auto;
 	text-align: center;
 }
 
-#legend ul {
+#controls ul {
 	margin: 20px auto;
 	padding: 10px;
     border: 1px solid #cccccc;
     border-radius: 5px;
 }
 
-#legend ul li {
+#controls ul li {
 	margin-top: 5px;	
 }
 
-#legend ul#values li {
+#controls ul#values li {
     height: 40px;
+    display: none;
 }
 
-#legend ul#values li p {
+#controls ul#values li p {
     padding-top: 10px;
     font-size: 16px;
 }
 
-#legend ul#values li table {
+#controls ul#values li table {
     width: 40px;
     height: 40px;
     valign: center;
@@ -63,7 +69,7 @@ body {
     text-align: center;
 }
 
-#legend p#info {
+#controls p#info {
 	margin-top: 30px;
 	color: #071e84;
 	font-weight: bold;
@@ -73,39 +79,37 @@ body {
 	background: #ccc;
 }
 
-ul#continents {
-	margin: 10px 0 0 0;
+ul#types {
+	margin: 0 0 10px 0;
 	text-align: center;
 }
 
-ul#continents li {
+ul#types li {
 	float: left;
 	font-size: 14px;
 }
 
-ul#continents li label {
-    width:110px;
+ul#types li label {
+    width: 95px;
     margin: 2px 0 0 0;
     background:#EFEFEF;
-    border-top-left-radius: 4px;
-    border-top-right-radius: 4px;    
     border:1px solid #D0D0D0;
     overflow:auto;
 }
 
-ul#continents li label span {
+ul#types li label span {
     text-align:center;
     font-size: 16px;
     padding:5px 0px;
     display:block;
 }
 
-ul#continents li label input {
+ul#types li label input {
 	position: absolute;
 	top: -20px;
 }
 
-ul#continents li label input:checked+span {
+ul#types li label input:checked {
 	background: #404040;
 	color: #F7F7F7;
 }
