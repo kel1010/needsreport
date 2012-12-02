@@ -1,5 +1,5 @@
 django==1.4.2
-pymongo
-twilio
-geopy
-python-memcached
+twilio==3.4.1
+geopy==0.94.2
+python-memcached==1.48
+pymongo==2.4

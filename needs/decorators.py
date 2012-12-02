@@ -1,6 +1,8 @@
 from django.core import cache
 from functools import wraps
 
+import logging
+
 class Nil:
     pass
 

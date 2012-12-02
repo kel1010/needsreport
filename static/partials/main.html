@@ -24,13 +24,16 @@
             <ul ng-init="stypes=[]" id="types">
                 <li ng-repeat="type in TYPES">
                     <label>
-                        <input class="type" type="checkbox" checked ng-model="stypes[type]" ng-init="stypes[type]=true" ng-change="changeTypes(type)">
-	                    <img src="images/{{type}}3.png"/><br/>
-	                    {{type}}
+                        <input class="type" type="checkbox" ng-model="stypes[type]" ng-init="stypes[type]=true" ng-change="changeTypes(type)">
+	                    <span>
+		                    <img src="images/{{type}}3.png"/><br/>
+		                    {{type}}
+	                    </span>
                     </label>
                 </li>
             </ul>
             <div class="clear"></div>
+            <div id="timeline"></div>            
             <!--<ul id="values">
                 <li><table><tr><td><img src="images/Water1.png"/></td></tr></table><p>1 - 9 reports</p></li>
                 <li><table><tr><td><div class="img"><img src="images/Water2.png"/></td></tr></table><p>10 - 99 reports</p></li>

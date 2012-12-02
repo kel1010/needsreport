@@ -5,7 +5,6 @@
 function main($scope, $http) {
 	$http.get("/a/map_data").success(function(res) {
 		$scope.CONTINENTS=['Africa', 'Asia', 'Australia', 'Europe', 'North America', 'South America'];
-		$scope.TYPES =['Education', 'Hospital', 'Sanitation', 'Employment', 'Water', 'Agriculture', 'Infrastructure'];
 		$scope.CONTINENT_LOCATIONS={ // [lat, lng, zoom_level]
 			'Africa': [7.19, 21.10, 3],
 			'Asia': [29.84, 89.30, 3],
@@ -16,7 +15,7 @@ function main($scope, $http) {
 		};
 		$scope.TYPE_COLOR = {
 			'Education': '#f06697',
-			'Hospital': '#ed2224',
+			'Health': '#ed2224',
 			'Sanitation': '#5e53a3',
 			'Employment': '#f26822',
 			'Water': '#1195cb',
@@ -25,15 +24,34 @@ function main($scope, $http) {
 		};
 		$scope.last_continent = null;
 		$scope.data=res["data"];
-		$scope.types=res["types"];
+		$scope.TYPES=res["types"];
 
 		$scope.infoWin = new google.maps.InfoWindow({
 			size: new google.maps.Size(350, 350)
    		});
 
 		$scope._initMap();
+		$scope._initTimeline();
 	});
 
+	$scope._initTimeline = function() {
+		var timeline = new google.visualization.AnnotatedTimeLine(document.getElementById("timeline"));
+		var data = new google.visualization.DataTable();
+		data.addColumn('date', 'Date');
+		data.addColumn('number', 'count');
+		data.addRows([
+            [new Date(2005, 1 ,1), 0],
+            [new Date(2013, 1 ,1), 0]
+        ]);
+		timeline.draw(data, {
+			displayAnnotations: false,
+		});
+		google.visualization.events.addListener(timeline, 'rangechange', function() {
+			var range = timeline.getVisibleChartRange();
+			alert(range.start.getTime()+":"+range.end.getTime());
+		});
+	}
+	
 	$scope._createMarkerListener = function(marker) {
 		
        	google.maps.event.addListener(marker, 'click', function(e) {
@@ -84,6 +102,15 @@ function main($scope, $http) {
 		$scope.map = new google.maps.Map(document.getElementById("map"), opts);
 		$scope.markers = Array();
 
+		var countyLayer = new google.maps.FusionTablesLayer({
+			query: {
+				select: 'geometry',
+				from: '0IMZAFCwR-t7jZnVzaW9udGFibGVzOjIxMDIxNw'
+			},
+		});
+
+		//countyLayer.setMap($scope.map);
+
 		for (var i=0; i<$scope.data.length; ++i) {
 			var point = $scope.data[i];
 			if (point.loc) {
@@ -106,6 +133,7 @@ function main($scope, $http) {
 				}
 			}
 		}
+		
 	}
 
 	$scope.changeTypes = function(type) {

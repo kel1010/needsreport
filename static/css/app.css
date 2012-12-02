@@ -21,13 +21,11 @@ body {
     max-width: none;
 }
 
-#types {
-    background: white;
-    padding-right: 10px;
-    border-right: 2px solid #aaa;
+#timeline {
+	height:90px;
 }
 
-#control {
+#controls {
 	font-size: 16px;
 	background: white;
 	padding-right: 10px;
@@ -91,14 +89,15 @@ ul#types li {
 
 ul#types li label {
     width: 95px;
-    margin: 2px 0 0 0;
-    background:#EFEFEF;
+    height: 65px;
+    background:#CCCCCC;
     border:1px solid #D0D0D0;
+    display: block;
     overflow:auto;
 }
 
 ul#types li label span {
-    text-align:center;
+	text-align:center;
     font-size: 16px;
     padding:5px 0px;
     display:block;
@@ -109,9 +108,10 @@ ul#types li label input {
 	top: -20px;
 }
 
-ul#types li label input:checked {
+ul#types li label input:checked+span {
 	background: #404040;
 	color: #F7F7F7;
+	
 }
 
 #info h2 {

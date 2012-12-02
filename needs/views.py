@@ -5,7 +5,7 @@ from geopy import geocoders
 
 from twilio import twiml
 
-from needs.db import needs_coll
+from needs.mongodb import db, get_types_map, get_types
 from needs.decorators import cache_result
 
 import logging
@@ -18,14 +18,15 @@ import hashlib
 
 distanct = 30 #km
 
-LOCATIONS = ['Beijing, China', 'Bogota, Colombia', 'Buenos Aires, Argentina', 'Cairo, Egypt', 'Delhi, India', 'Dhaka, Bangladesh', 'Guangzhou, China', 'Istanbul, Turkey', 'Jakarta, Indonesia', 'Karchi, Pakaistan']
-TYPES =['Education', 'Hospital', 'Sanitation', 'Employment', 'Water', 'Agriculture', 'Infrastructure']
+LOCATIONS = ['New York, NY', 'San Francisco, CA', 'Chicago, IL', 'Seattle, WA', 'Las Vegas, NV', 'Houston, TX', 'Champaign, IL']
+#['Beijing, China', 'Bogota, Colombia', 'Buenos Aires, Argentina', 'Cairo, Egypt', 'Delhi, India', 'Dhaka, Bangladesh', 'Guangzhou, China', 'Istanbul, Turkey', 'Jakarta, Indonesia', 'Karchi, Pakaistan']
 
 def _find_type(request):
     slug = slugify(request.REQUEST.get('Body', ''))
-    for type in TYPES:
-        if slug.find(type.lower())>=0:
-            return type
+    m = get_types_map()
+    for _type in m.keys():
+        if slug.find(_type.lower())>=0:
+            return m[_type]
 
 def _uid(request):
     return request.REQUEST['From']
@@ -34,9 +35,9 @@ def _new(request):
 
     r = twiml.Response()
 
-    type = _find_type(request)
+    _type = _find_type(request)
     if not type:
-        r.sms('We only support %s needs. Please try again.' % ', '.join(TYPES))
+        r.sms('We only support %s needs. Please try again.' % ', '.join(get_types()))
         return HttpResponse(str(r))
 
     data = dict()
@@ -44,7 +45,7 @@ def _new(request):
     data['body'] = request.REQUEST.get('Body', '')
 
     data['from_num'] = request.REQUEST.get('From', None)
-    data['type'] = type
+    data['type'] = _type
 
     data['full'] = str(request.REQUEST)
     data['_id'] = _uid(request)
@@ -52,7 +53,7 @@ def _new(request):
 
     data['country'] = request.REQUEST.get('FromCountry', None)
 
-    uid = needs_coll.save(data)
+    uid = db.needs.save(data)
 
     if uid:
         if data['country']=='US':
@@ -72,7 +73,6 @@ def _geocode(address):
 
 def _confirm(request, data):
     location = request.REQUEST.get('Body', '')
-    country = request.REQUEST.get('FromCountry', '')
 
     address = location
     res = _geocode(address)
@@ -81,9 +81,9 @@ def _confirm(request, data):
 
     if res:
         place, loc = res[0]
-        needs_coll.update({'_id':_uid(request)}, {'$set': {'loc':loc, 'loc_place':place, 'loc_input':location}})
+        db.needs.update({'_id':_uid(request)}, {'$set': {'loc':loc, 'loc_place':place, 'loc_input':location}})
 
-        count = needs_coll.find({'loc_place':place}).count()
+        count = db.needs.find({'loc_place':place}).count()
 
         if count>1:
             r.sms('There are %s requests for %s in your area.  Hopefully someone will take action.' % (count, data['type'].lower()))
@@ -105,8 +105,8 @@ def _too_old(data):
 
 def sms(request):
     uid = _uid(request)
-    data = needs_coll.find_one(dict(_id=uid))
-    
+    data = db.needs.find_one(dict(_id=uid))
+
     if not data or _too_old(data):
         return _new(request)
     else:
@@ -120,16 +120,20 @@ def _loc_defined(points):
     return True
 
 def loc_data(request):
-    req = json.loads(request.body)
+    req = json.loads(request.raw_post_data)
     loc_place = req['loc_place']
-    locs = needs_coll.group(key={'type':True}, condition={'loc_place':loc_place}, reduce='function(a,c) {c.sum+=1}', initial={'sum':0})
+    locs = db.needs.group(key={'type':True}, condition={'loc_place':loc_place}, reduce='function(a,c) {c.sum+=1}', initial={'sum':0})
     locs.sort(lambda a,b: int(b['sum']-a['sum']))
 
     return HttpResponse(json.dumps(locs), content_type='application/json')
 
+def init_data(request):
+    
+    return HttpResponse(json.dumps(dict(types=get_types())), content_type='application/json')    
+
 def map_data(request):
     data = []
-    locs = needs_coll.group(key={'type':True, 'loc':True, 'loc_place':True}, condition={}, reduce='function(a,c) {c.sum+=1}', initial={'sum':0})
+    locs = db.needs.group(key={'type':True, 'loc':True, 'loc_place':True}, condition={}, reduce='function(a,c) {c.sum+=1}', initial={'sum':0})
     locs.sort(lambda a,b: int(a['sum']-b['sum']))
     for loc in locs:
         if 'loc' in loc and loc['loc']:
@@ -140,7 +144,9 @@ def map_data(request):
             loc['type'] = loc['type'].title()
             data.append(loc)
 
-    return HttpResponse(json.dumps(dict(types=TYPES, data=data)), content_type='application/json')
+    print get_types()
+
+    return HttpResponse(json.dumps(dict(types=get_types(), data=data)), content_type='application/json')
 
 def dummy_data(request):
 
@@ -148,7 +154,7 @@ def dummy_data(request):
         data = dict()
 
         data['from_num'] = num
-        data['type'] = random.choice(TYPES)
+        data['type'] = random.choice(get_types())
         data['created'] = time.time()
         data['_id'] = uuid.uuid4().hex
         data['country'] = 'dummy'
@@ -157,11 +163,14 @@ def dummy_data(request):
         data['loc_input'] = location
 
         res = _geocode(location)
+        
+        print res
+        print location
 
         if res:
             place, loc = res[0]
             data.update({'loc':loc, 'loc_place':place})
 
-        needs_coll.insert(data)
+        db.needs.insert(data)
 
     return HttpResponse()
