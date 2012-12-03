@@ -3,7 +3,7 @@
 /* Controllers */
 
 function main($scope, $http) {
-	$http.get("/a/map_data").success(function(res) {
+	$http.get("/a/init_data").success(function(res) {
 		$scope.CONTINENTS=['Africa', 'Asia', 'Australia', 'Europe', 'North America', 'South America'];
 		$scope.CONTINENT_LOCATIONS={ // [lat, lng, zoom_level]
 			'Africa': [7.19, 21.10, 3],
@@ -20,42 +20,60 @@ function main($scope, $http) {
 			'Employment': '#f26822',
 			'Water': '#1195cb',
 			'Agriculture': '#a1cd3a',
-			'Infrastructure': '#ebea62'
+			'Infrastructure': '#ebea62',
+			'Corruption': '#000'
 		};
 		$scope.last_continent = null;
-		$scope.data=res["data"];
-		$scope.TYPES=res["types"];
+		$scope.TYPES=res['types'];
 
 		$scope.infoWin = new google.maps.InfoWindow({
 			size: new google.maps.Size(350, 350)
    		});
 
-		$scope._initMap();
-		$scope._initTimeline();
+		$scope._initTimeline(res['min_time']);
 	});
 
-	$scope._initTimeline = function() {
+	$scope._initTimeline = function(min_time) {
+
 		var timeline = new google.visualization.AnnotatedTimeLine(document.getElementById("timeline"));
+
+		var end = new Date().getTime();
+		var start = end - 7889000000;
+
 		var data = new google.visualization.DataTable();
 		data.addColumn('date', 'Date');
 		data.addColumn('number', 'count');
 		data.addRows([
-            [new Date(2005, 1 ,1), 0],
-            [new Date(2013, 1 ,1), 0]
+            [new Date(min_time*1000), 0],
+            [new Date(), 0]
         ]);
 		timeline.draw(data, {
 			displayAnnotations: false,
 		});
+
+		timeline.setVisibleChartRange(new Date(start), new Date(end));
+
 		google.visualization.events.addListener(timeline, 'rangechange', function() {
 			var range = timeline.getVisibleChartRange();
-			alert(range.start.getTime()+":"+range.end.getTime());
+			var start = range.start.getTime();
+			var end = range.end.getTime();
+			$http.post("/a/map_data", {start: start/1000, end: end/1000}).success(function(res) {
+				$scope.data = res['data'];
+				$scope._drawMap(start, end);
+			});
 		});
+
+		$http.post("/a/map_data", {start: start/1000, end: end/1000}).success(function(res) {
+			$scope.data = res['data'];
+			$scope._drawMap(start, end);
+		});
+
 	}
-	
-	$scope._createMarkerListener = function(marker) {
-		
+
+	$scope._createMarkerListener = function(marker, start, end) {
+
        	google.maps.event.addListener(marker, 'click', function(e) {
-       		$http.post("/a/loc_data", {loc_place:marker.point.loc_place}).success(function(res) {
+       		$http.post("/a/loc_data", {loc_place:marker.point.loc_place, start:start/1000, end:end/1000}).success(function(res) {
 	   			$scope.infoWin.close();
 	   			var chartDiv = document.createElement("div");
 	   			var chart = new google.visualization.BarChart(chartDiv);
@@ -93,7 +111,7 @@ function main($scope, $http) {
        	});
 	}
 	
-	$scope._initMap = function() {
+	$scope._drawMap = function(start, end) {
 		var opts = {
 			zoom: 2,
 			center: new google.maps.LatLng(20, 12),
@@ -125,7 +143,7 @@ function main($scope, $http) {
 		       		map: $scope.map
 		       	});
 		       	marker.point = point;
-		       	$scope._createMarkerListener(marker);
+		       	$scope._createMarkerListener(marker, start, end);
 		       	if (type in $scope.markers) {
 		       		$scope.markers[type].push(marker);
 				} else {

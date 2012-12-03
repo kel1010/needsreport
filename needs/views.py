@@ -1,25 +1,16 @@
 from django.http import HttpResponse
 from django.template.defaultfilters import slugify
 
-from geopy import geocoders
+from needs.mongodb import db, get_types_map, get_types
+from needs.loc_query import geocode
 
 from twilio import twiml
 
-from needs.mongodb import db, get_types_map, get_types
-from needs.decorators import cache_result
-
-import logging
-import datetime, time
+import time
 import json
 import math
 import random
 import uuid
-import hashlib
-
-distanct = 30 #km
-
-LOCATIONS = ['New York, NY', 'San Francisco, CA', 'Chicago, IL', 'Seattle, WA', 'Las Vegas, NV', 'Houston, TX', 'Champaign, IL']
-#['Beijing, China', 'Bogota, Colombia', 'Buenos Aires, Argentina', 'Cairo, Egypt', 'Delhi, India', 'Dhaka, Bangladesh', 'Guangzhou, China', 'Istanbul, Turkey', 'Jakarta, Indonesia', 'Karchi, Pakaistan']
 
 def _find_type(request):
     slug = slugify(request.REQUEST.get('Body', ''))
@@ -63,19 +54,11 @@ def _new(request):
 
     return HttpResponse(str(r))
 
-@cache_result(lambda address: hashlib.md5(address).hexdigest(), expires=7200)
-def _geocode(address):
-    geocoder = geocoders.Google()
-    try:    
-        return geocoder.geocode(address, exactly_one=False)
-    except:
-        return None
-
 def _confirm(request, data):
     location = request.REQUEST.get('Body', '')
 
     address = location
-    res = _geocode(address)
+    res = geocode(address)
 
     r = twiml.Response()
 
@@ -95,19 +78,14 @@ def _confirm(request, data):
     return HttpResponse(str(r))
 
 def _too_old(data):
-    val = data.get('created', None)
-    try:
-        t=int(val)
-    except:
-        return True
-
+    t = data.get('created', 0)
     return not t or time.time()-t > 3600
 
 def sms(request):
     uid = _uid(request)
     data = db.needs.find_one(dict(_id=uid))
 
-    if not data or _too_old(data):
+    if not data or _too_old(data) or data.get('loc', None):
         return _new(request)
     else:
         return _confirm(request, data)
@@ -122,55 +100,40 @@ def _loc_defined(points):
 def loc_data(request):
     req = json.loads(request.raw_post_data)
     loc_place = req['loc_place']
-    locs = db.needs.group(key={'type':True}, condition={'loc_place':loc_place}, reduce='function(a,c) {c.sum+=1}', initial={'sum':0})
+    start = int(req.get('start', 0))
+    end = int(req.get('end', time.time()))
+    condition = {'loc_place':loc_place, 'created':{'$lte': end, '$gte': start}}    
+    locs = db.needs.group(key={'type':True}, condition=condition, reduce='function(a,c) {c.sum+=1}', initial={'sum':0})
     locs.sort(lambda a,b: int(b['sum']-a['sum']))
 
     return HttpResponse(json.dumps(locs), content_type='application/json')
 
 def init_data(request):
-    
-    return HttpResponse(json.dumps(dict(types=get_types())), content_type='application/json')    
+    types = get_types()
+    min_time_res = db.needs.find({'created':{'$exists': True}}).sort('created', 1).limit(1)
+    if min_time_res.count()>0:
+        min_time = min_time_res[0]['created']
+    else:
+        min_time = 1325376000
+
+    return HttpResponse(json.dumps(dict(types=types, min_time=min_time)), content_type='application/json')    
 
 def map_data(request):
-    data = []
-    locs = db.needs.group(key={'type':True, 'loc':True, 'loc_place':True}, condition={}, reduce='function(a,c) {c.sum+=1}', initial={'sum':0})
-    locs.sort(lambda a,b: int(a['sum']-b['sum']))
-    for loc in locs:
-        if 'loc' in loc and loc['loc']:
-            value = int(math.log(loc['sum'], 10))+1
-            if value>5:
-                value=5
-            loc['value'] = value
-            loc['type'] = loc['type'].title()
-            data.append(loc)
+    req = json.loads(request.raw_post_data)
+    start = int(req.get('start', 0))
+    end = int(req.get('end', time.time()))
+    condition = {'loc':{'$exists': True}, 'created':{'$lte': end, '$gte': start}}
+    locs = db.needs.group(key={'type':True, 'loc':True, 'loc_place':True}, condition=condition, reduce='function(a,c) {c.sum+=1}', initial={'sum':0})
+    locs.sort(lambda a,b: int(b['sum']-a['sum']))
 
-    print get_types()
+    data = []    
+    for loc in locs:
+        value = int(math.log(loc['sum'], 10))+1
+        if value>5:
+            value=5
+        loc['value'] = value
+        loc['type'] = loc['type'].title()
+        data.append(loc)
 
     return HttpResponse(json.dumps(dict(types=get_types(), data=data)), content_type='application/json')
 
-def dummy_data(request):
-
-    for num in range(0, 100):
-        data = dict()
-
-        data['from_num'] = num
-        data['type'] = random.choice(get_types())
-        data['created'] = time.time()
-        data['_id'] = uuid.uuid4().hex
-        data['country'] = 'dummy'
-
-        location = random.choice(LOCATIONS)
-        data['loc_input'] = location
-
-        res = _geocode(location)
-        
-        print res
-        print location
-
-        if res:
-            place, loc = res[0]
-            data.update({'loc':loc, 'loc_place':place})
-
-        db.needs.insert(data)
-
-    return HttpResponse()

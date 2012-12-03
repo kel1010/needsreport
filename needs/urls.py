@@ -25,5 +25,5 @@ urlpatterns = patterns('',
     url(r'^a/sms$', views.sms),
     url(r'^a/map_data$', views.map_data),
     url(r'^a/loc_data$', views.loc_data),
-    url(r'^a/dummy_data$', views.dummy_data),
+    url(r'^a/init_data$', views.init_data),    
 )
