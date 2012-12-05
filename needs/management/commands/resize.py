@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 
-import os, sys, logging
+import os, logging
 import Image
 
 SIZES = {1:20, 2:25, 3:30, 4:35, 5:40}

@@ -5,14 +5,6 @@
 function main($scope, $http) {
 	$http.get("/a/init_data").success(function(res) {
 		$scope.CONTINENTS=['Africa', 'Asia', 'Australia', 'Europe', 'North America', 'South America'];
-		$scope.CONTINENT_LOCATIONS={ // [lat, lng, zoom_level]
-			'Africa': [7.19, 21.10, 3],
-			'Asia': [29.84, 89.30, 3],
-			'Australia': [-27.00, 133.0, 4],
-			'Europe': [48.69, 9.14, 4],
-			'North America': [46.07, -100.55, 3],
-			'South America': [-14.60, -57.66, 3]
-		};
 		$scope.TYPE_COLOR = {
 			'Education': '#f06697',
 			'Health': '#ed2224',
@@ -23,8 +15,9 @@ function main($scope, $http) {
 			'Infrastructure': '#ebea62',
 			'Corruption': '#000'
 		};
-		$scope.last_continent = null;
 		$scope.TYPES=res['types'];
+		$scope.CONTINENTS=res['continents'];
+		$scope.map=null;
 
 		$scope.infoWin = new google.maps.InfoWindow({
 			size: new google.maps.Size(350, 350)
@@ -112,13 +105,26 @@ function main($scope, $http) {
 	}
 	
 	$scope._drawMap = function(start, end) {
-		var opts = {
-			zoom: 2,
-			center: new google.maps.LatLng(20, 12),
-			mapTypeId: google.maps.MapTypeId.ROADMAP
+		if ($scope.map==null) {
+			var opts = {
+				zoom: 2,
+				center: new google.maps.LatLng(20, 12),
+				mapTypeId: google.maps.MapTypeId.ROADMAP
+			}
+			$scope.map = new google.maps.Map(document.getElementById("map"), opts);
+		} else {
+			for (var i=0; i<$scope.TYPES.length; ++i) {
+				var type = $scope.TYPES[i];
+				for (var j=0; j<$scope.markers[type].length; ++j) {
+					$scope.markers[type][j].setMap(null);
+				}
+			}
 		}
-		$scope.map = new google.maps.Map(document.getElementById("map"), opts);
 		$scope.markers = Array();
+		for (var i=0; i<$scope.TYPES.length; ++i) {
+			var type = $scope.TYPES[i];
+			$scope.markers[type] = Array();
+		}
 
 		var countyLayer = new google.maps.FusionTablesLayer({
 			query: {
@@ -164,19 +170,27 @@ function main($scope, $http) {
 		}
 	}
 
-	$scope.selectContinent = function() {
-		if ($scope.last_continent!=$scope.selected.continent) {
-			var loc = $scope.CONTINENT_LOCATIONS[$scope.selected.continent];
-			var latLng = new google.maps.LatLng(loc[0], loc[1]);
+	$scope.selectContinent = function(continent) {
+		if ($scope.selectedContinent!=continent) {
+			var latLng = new google.maps.LatLng(continent['latlng'][0], continent['latlng'][1]);
 			$scope.map.setCenter(latLng);
-			$scope.map.setZoom(loc[2]);
-			$scope.last_continent=$scope.selected.continent;
+			$scope.map.setZoom(continent['zoom']);
+			$scope.selectedContinent=continent;
 		} else {
-			$scope.last_continent=$scope.selected.continent=null;
+			$scope.selectedContinent=null;
 			$scope.map.setCenter(new google.maps.LatLng(20, 12));
 			$scope.map.setZoom(2);
 		}
 	}
 
+	$scope.selectCountry = function(country) {
+		if ($scope.selectedCountry!=country) {
+			var latLng = new google.maps.LatLng(country['latlng'][0], country['latlng'][1]);
+			$scope.map.setCenter(latLng);
+			$scope.map.setZoom(country['zoom']);
+			$scope.selectedCountry=country;
+		} 
+	}
+	
 }
 

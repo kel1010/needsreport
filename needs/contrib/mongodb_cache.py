@@ -89,7 +89,7 @@ class MongoDBCache(object):
             else:
                 if self.debug:
                     logger.error('Success cache hit for key: %s' % key)
-                value = pickle.loads(obj['value'].encode('utf-8'))
+                value = pickle.loads(obj['value'])
                 if isinstance(value, basestring):
                     return smart_unicode(value)
                 else:

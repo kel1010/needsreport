@@ -1,14 +1,38 @@
-<div class="container-fluid">
+<div class="container-fluid" id="main">
 	<div class="row-fluid">
 		<div class="span3">
-		    <div id="controls">
+		    <div id="controls" ng-init="control='locations'">
 		        <div id="logo">
 		            <img src="images/logo.jpg"/>
 		        </div>
-                <p id="info">
+		        <button class="title" ng-click="control='locations'">LOCATIONS</button>
+	            <ul id="continents" ng-init="selectedContinent=null" ng-show="control=='locations'" class="content">
+	                <li ng-repeat="continent in CONTINENTS">
+	                	<button class="continent" ng-click="selectContinent(continent)">{{continent.continent}}</button>
+	                	<ul class="countries" ng-show="selectedContinent==continent">
+							<li ng-repeat="country in continent.countries">
+								<button class="country" ng-click="selectCountry(country)">{{country.country}}</button>
+							</li>
+						</ul>
+	                </li>
+	            </ul>
+				<button class="title" ng-click="control='layers'">LAYERS</button>
+				<ul id="layers" ng-show="control=='layers'" class="content">
+					<li>
+					</li>
+				</ul>
+	    		<button class="title" ng-click="control='values'">VALUES</button>
+	            <ul id="values" ng-show="control=='values'" class="content">
+	                <li><table><tr><td><img src="images/Water1.png"/></td></tr></table><p>1 - 9 reports</p></li>
+	                <li><table><tr><td><div class="img"><img src="images/Water2.png"/></td></tr></table><p>10 - 99 reports</p></li>
+	                <li><table><tr><td><div class="img"><img src="images/Water3.png"/></td></tr></table><p>100 - 999 reports</p></li>
+	                <li><table><tr><td><div class="img"><img src="images/Water4.png"/></td></tr></table><p>1000 - 9999 reports</p></li>
+	                <li><table><tr><td><div class="img"><img src="images/Water5.png"/></td></tr></table><p>10000+ reports</p></li>
+	            </ul>
+                <!-- <p id="info">
                     The Needs Report helps identify the greatest need in communities around the world, so aid and social services organizations can 
                     move the right resources to the right places, based on what the people living in those communities feel the need the most.
-                </p>		        
+                </p>-->
 	        </div>
 		</div>
         <div class="span9">
@@ -33,33 +57,7 @@
                 </li>
             </ul>
             <div class="clear"></div>
-            <div id="timeline"></div>            
-            <!--<ul id="values">
-                <li><table><tr><td><img src="images/Water1.png"/></td></tr></table><p>1 - 9 reports</p></li>
-                <li><table><tr><td><div class="img"><img src="images/Water2.png"/></td></tr></table><p>10 - 99 reports</p></li>
-                <li><table><tr><td><div class="img"><img src="images/Water3.png"/></td></tr></table><p>100 - 999 reports</p></li>
-                <li><table><tr><td><div class="img"><img src="images/Water4.png"/></td></tr></table><p>1000 - 9999 reports</p></li>
-                <li><table><tr><td><div class="img"><img src="images/Water5.png"/></td></tr></table><p>10000+ reports</p></li>
-            </ul>-->
-            <div id="info">
-	            <div class="span1"></div>
-	            <div class="span5">
-	                <h2>CREATE A NEED</h2>
-	                <p>
-	                    Add your need online right now, or text it to <span id="number">011-987-654-3210</span> anywhere in the world to get started -
-	                    we will automatically add it to the Needs Map, so social service organizations know what the people in your 
-	                    community really care about.
-	                </p>
-	            </div>
-	            <div class="span5">
-	                <h2>NEED NEWS</h2>
-	                <p>
-	                    We're always mining our Needs Data to see what the greatest needs are, all 
-	                    over the world, looking for patterns and distilling all our information into helpful
-	                    reports for aid workers and social services organizations.
-	                </p>
-	            </div>
-            </div>
+            <div id="timeline"></div>
         </div>
 	</div>
 </div>
