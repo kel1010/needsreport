@@ -17,8 +17,9 @@
 	                </li>
 	            </ul>
 				<button class="title" ng-click="control='layers'">LAYERS</button>
-				<ul id="layers" ng-show="control=='layers'" class="content">
-					<li>
+				<ul id="layers" ng-show="control=='layers'" ng-init="selectedLayer=null" class="content">
+					<li ng-repeat="layer in LAYERS">
+						<button class="layer" ng-click="selectLayer(layer)">{{layer.name}}</button>
 					</li>
 				</ul>
 	    		<button class="title" ng-click="control='values'">VALUES</button>

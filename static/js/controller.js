@@ -22,6 +22,36 @@ function main($scope, $http) {
 		$scope.infoWin = new google.maps.InfoWindow({
 			size: new google.maps.Size(350, 350)
    		});
+		
+		$scope.LAYERS = [
+		    {
+				name: 'US County',
+				layer: new google.maps.FusionTablesLayer({
+					query: {
+						select: 'geometry',
+						from: '0IMZAFCwR-t7jZnVzaW9udGFibGVzOjIxMDIxNw'
+					}
+				})
+			},
+			{
+				name: 'World Population Growth Rate',
+				layer: new google.maps.FusionTablesLayer({
+					query: {
+						select: 'geometry, Name, Rate',
+						from: '1osw8Yiy-zDS2P4_-GoIy8d11KvW6qYqiac2_6LY'
+					}
+				})
+			},
+			{
+				name: 'World Life Expectancy',
+				layer: new google.maps.FusionTablesLayer({
+					query: {
+						select: 'geometry, Name, Rate',
+						from: '1gB6YRzBDrNqfhs8wAsNhGkC_vI4LczSms72oqBU'
+					}
+				})
+			}
+		];
 
 		$scope._initTimeline(res['min_time']);
 	});
@@ -126,15 +156,6 @@ function main($scope, $http) {
 			$scope.markers[type] = Array();
 		}
 
-		var countyLayer = new google.maps.FusionTablesLayer({
-			query: {
-				select: 'geometry',
-				from: '0IMZAFCwR-t7jZnVzaW9udGFibGVzOjIxMDIxNw'
-			},
-		});
-
-		//countyLayer.setMap($scope.map);
-
 		for (var i=0; i<$scope.data.length; ++i) {
 			var point = $scope.data[i];
 			if (point.loc) {
@@ -191,6 +212,13 @@ function main($scope, $http) {
 			$scope.selectedCountry=country;
 		} 
 	}
-	
-}
 
+	$scope.selectLayer = function(layer) {
+		if ($scope.selectedLayer!=null) {
+			$scope.selectedLayer.layer.setMap(null);
+		}
+		layer.layer.setMap($scope.map);
+		$scope.selectedLayer = layer;
+	}
+
+}

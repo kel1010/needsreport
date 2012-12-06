@@ -42,6 +42,8 @@ body {
 	background: #444;
 	color: white;
 	text-align: center;
+	border-radius: 5px;
+	padding: 6px;
 }
 
 #controls div#logo {
