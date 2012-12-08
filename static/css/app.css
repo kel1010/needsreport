@@ -1,93 +1,103 @@
 <style type="text/css">
 
+html {
+    background: #ddd;
+}
+
 body {
     font-family: Arial;
     background: #ddd;
 }
 
 .clear {
-	clear: both;
+    clear: both;
+}
+
+#app {
+    height: 700px;
+    border-bottom: 4px solid #888;    
 }
 
 #main {
-	height: 800px;
-}
-
-#map {
 	width: auto;
-	height: 600px;
+	height: 700px;
+	margin-left: 250px;
+    border-left: 4px solid #888;
+    min-width: 700px;
+    
+}
+#map {
+    width: auto;
+    height: 540px;
 }
 
 #map img {
     max-width: none;
 }
 
-#timeline {
-	height:90px;
-}
-
 #controls {
-	padding-right: 10px;
+    float: left;
+    width: 250px;
+    height: 612px;
 }
 
 #controls .content {
-	height: 550px;
-	background: #eee;
+    height: 490px;
+    background: #eee;
 }
 
 #controls button.title {
-	font-size: 16px;
-	font-weight: bold;
-	width: 100%;
-	background: #444;
-	color: white;
-	text-align: center;
-	border-radius: 5px;
-	padding: 6px;
+    font-size: 16px;
+    font-weight: bold;
+    width: 100%;
+    background: #444;
+    color: white;
+    text-align: center;
+    border-radius: 5px;
+    padding: 6px;
 }
 
 #controls div#logo {
-	margin: 20px auto;
-	text-align: center;
+    margin: 10px auto;
+    text-align: center;
 }
 
 #controls ul {
-	margin: 0;
+    margin: 0;
 }
 
-#controls button.continent {
-	width: 100%;
-	font-size: 14px;
-	font-weight: bold;
-	background: #666;
-	color: white;
-	text-align: left;
+#controls button.continent, #controls button.layer{
+    width: 100%;
+    font-size: 14px;
+    font-weight: bold;
+    background: #666;
+    color: white;
+    text-align: left;
 }
 
 #controls button.country {
-	width: 100%;
-	font-size: 12px;
-	font-weight: bold;
-	background: #888;
-	color: white;
-	text-align: left;
+    width: 100%;
+    font-size: 12px;
+    font-weight: bold;
+    background: #888;
+    color: white;
+    text-align: left;
 }
 
 #controls ul.countries {
-	overflow-y: scroll;
-	overflow-x: hidden;
-	height: 400px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    height: 325px;
 }
 
 #controls ul#values {
-	text-align: left;
+    text-align: left;
     border: 1px solid #cccccc;
-    padding: 10px;
 }
 
 #controls ul#values li {
-	margin-top: 5px;	
-	height: 40px;
+    margin-top: 5px;    
+    height: 45px;
 }
 
 #controls ul#values li p {
@@ -104,25 +114,24 @@ body {
     text-align: center;
 }
 
-#controls p#info {
-	margin-top: 30px;
-	color: #071e84;
-	font-weight: bold;
+#timeline {
+    height: 90px;
+    margin-right: 4px;
 }
 
 ul#types {
-	margin: 0 0 10px 0;
-	text-align: center;
+    margin: 0 0 10px 0;
+    text-align: center;
 }
 
 ul#types li {
-	float: left;
-	font-size: 14px;
+    float: left;
+    font-size: 14px;
 }
 
 ul#types li label {
     width: 95px;
-    height: 65px;
+    height: 70px;
     background:#CCCCCC;
     border:1px solid #D0D0D0;
     display: block;
@@ -130,28 +139,53 @@ ul#types li label {
 }
 
 ul#types li label span {
-	text-align:center;
+    text-align:center;
     font-size: 16px;
     padding:5px 0px;
     display:block;
 }
 
 ul#types li label input {
-	position: absolute;
-	top: -20px;
+    position: absolute;
+    top: -20px;
 }
 
 ul#types li label input:checked+span {
-	background: #404040;
-	color: #F7F7F7;
-	
+    background: #404040;
+    color: #F7F7F7;
+    
 }
 
-#info h2 {
-    color: #071e84;	
+div#info {
+	margin-top: 20px;
+    font-size: 12px;
 }
 
-#info span#number {
+div#info div#about {
+    color: #071e84;
+    font-weight: bold;
+    width: 240px;
+    float: left;
+    margin-left: 10px;
+}
+
+div#info div#text {
+	margin-left: 280px;
+}
+
+div#info div#text div {
+	float: left;
+	width: 40%;
+	margin: 0 5% 0 5%;
+}
+
+div#info h2 {
+    color: #071e84;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+div#info span#number {
     color: #071e84;
     font-weight: bold;
     white-space:nowrap; 

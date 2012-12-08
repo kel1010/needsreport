@@ -143,7 +143,7 @@ def init_data(request):
                 pop_log = 4
 
             continent['countries'].append({'country': country['country'], 'latlng': country['latlng'], 'zoom': 10-pop_log})
-
+    
     return HttpResponse(json.dumps(dict(types=types, min_time=min_time, continents=continents)), content_type='application/json')    
 
 def map_data(request):
