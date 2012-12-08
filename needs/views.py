@@ -124,7 +124,7 @@ def init_data(request):
     else:
         min_time = 1325376000
 
-    continents = copy.copy(CONTINENTS)
+    continents = copy.deepcopy(CONTINENTS)
     for continent in continents:
         for country in db.countries.find({'continent':continent['abbrev']}).sort('country', 1):
             if 'latlng' not in country or country['latlng']==None:

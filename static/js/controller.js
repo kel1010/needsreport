@@ -155,27 +155,30 @@ function main($scope, $http) {
             var type = $scope.TYPES[i];
             $scope.markers[type] = Array();
         }
-
+        if ($scope.stypes[type]) {
+        }
         for (var i=0; i<$scope.data.length; ++i) {
             var point = $scope.data[i];
             if (point.loc) {
-                var type = point.type;
+            	var type = point.type;
                 var url = "images/"+type+($scope.data[i].value)+".png";
                 var latLng = new google.maps.LatLng(point.loc[0], point.loc[1]);            
-                   var marker = new google.maps.Marker({
-                       position: latLng,
-                       draggable: false,
-                       icon: url,
-                       clickable: true,
-                       map: $scope.map
-                   });
-                   marker.point = point;
-                   $scope._createMarkerListener(marker, start, end);
-                   if (type in $scope.markers) {
+                var marker = new google.maps.Marker({
+					position: latLng,
+					draggable: false,
+					icon: url,
+					clickable: true,
+                 });
+                 marker.point = point;
+                 $scope._createMarkerListener(marker, start, end);
+                 if (type in $scope.markers) {
                        $scope.markers[type].push(marker);
-                } else {
-                    $scope.markers[type] = [marker];
-                }
+                 } else {
+                	 	$scope.markers[type] = [marker];
+                 }
+                 if ($scope.stypes[type]) {
+ 					marker.setMap($scope.map);
+                 }
             }
         }
         
@@ -210,15 +213,19 @@ function main($scope, $http) {
             $scope.map.setCenter(latLng);
             $scope.map.setZoom(country['zoom']);
             $scope.selectedCountry=country;
-        } 
+        }
     }
 
     $scope.selectLayer = function(layer) {
         if ($scope.selectedLayer!=null) {
             $scope.selectedLayer.layer.setMap(null);
         }
-        layer.layer.setMap($scope.map);
-        $scope.selectedLayer = layer;
+        if ($scope.selectedLayer==layer) {
+        	$scope.selectedLayer = null;
+        } else {
+	        layer.layer.setMap($scope.map);
+	        $scope.selectedLayer = layer;
+        }
     }
 
 }

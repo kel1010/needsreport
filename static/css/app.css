@@ -14,13 +14,13 @@ body {
 }
 
 #app {
-    height: 700px;
+    height: 650px;
     border-bottom: 4px solid #888;    
 }
 
 #main {
 	width: auto;
-	height: 700px;
+	height: 650px;
 	margin-left: 250px;
     border-left: 4px solid #888;
     min-width: 700px;
@@ -28,7 +28,7 @@ body {
 }
 #map {
     width: auto;
-    height: 540px;
+    height: 490px;
 }
 
 #map img {
@@ -38,11 +38,11 @@ body {
 #controls {
     float: left;
     width: 250px;
-    height: 612px;
+    height: 562px;
 }
 
 #controls .content {
-    height: 490px;
+    height: 440px;
     background: #eee;
 }
 
@@ -87,7 +87,7 @@ body {
 #controls ul.countries {
     overflow-y: scroll;
     overflow-x: hidden;
-    height: 325px;
+    height: 275px;
 }
 
 #controls ul#values {
@@ -130,17 +130,17 @@ ul#types li {
 }
 
 ul#types li label {
-    width: 95px;
+    width: 85px;
     height: 70px;
     background:#CCCCCC;
     border:1px solid #D0D0D0;
     display: block;
-    overflow:auto;
+    overflow: none;
 }
 
 ul#types li label span {
     text-align:center;
-    font-size: 16px;
+    font-size: 14px;
     padding:5px 0px;
     display:block;
 }
@@ -153,7 +153,6 @@ ul#types li label input {
 ul#types li label input:checked+span {
     background: #404040;
     color: #F7F7F7;
-    
 }
 
 div#info {
