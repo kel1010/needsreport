@@ -39,11 +39,12 @@ body {
     float: left;
     width: 250px;
     height: 562px;
+    background: #000080;
 }
 
 #controls .content {
     height: 440px;
-    background: #eee;
+    background: #000080;
 }
 
 #controls button.title {
@@ -93,6 +94,7 @@ body {
 #controls ul#values {
     text-align: left;
     border: 1px solid #cccccc;
+    color: #fff;
 }
 
 #controls ul#values li {
