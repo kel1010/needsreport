@@ -35,7 +35,7 @@ def _new(request):
     r = twiml.Response()
 
     _type = _find_type(request)
-    if not type:
+    if not _type:
         r.sms('We only support %s needs. Please try again.' % ', '.join(get_types()))
         return HttpResponse(str(r))
 
@@ -56,9 +56,9 @@ def _new(request):
 
     if uid:
         if data['country']=='US':
-            r.sms('Thanks for sending in your needs for %s. Where are you located? Please only enter city, state E.g. new york, ny' % type)
+            r.sms('Thanks for sending in your needs for %s. Where are you located? Please only enter city, state E.g. new york, ny' % _type)
         else:
-            r.sms('Thanks for sending in your needs for %s. Where are you located? Please only enter city, provience, country E.g. istanbul, turkey' % type)
+            r.sms('Thanks for sending in your needs for %s. Where are you located? Please only enter city, provience, country E.g. istanbul, turkey' % _type)
 
     return HttpResponse(str(r))
 
