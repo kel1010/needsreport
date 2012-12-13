@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 
-from needs.mongodb import db
+from needsapp.mongodb import db
 import csv
 
 class Command(BaseCommand):

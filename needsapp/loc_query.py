@@ -1,4 +1,4 @@
-from needs.contrib.mcache import cache_result
+from needsapp.contrib.mcache import cache_result
 
 from geopy import geocoders
 

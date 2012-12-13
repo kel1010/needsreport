@@ -18,6 +18,7 @@ function main($scope, $http) {
         $scope.TYPES=res['types'];
         $scope.CONTINENTS=res['continents'];
         $scope.map=null;
+        $scope.stypes = Array();
 
         $scope.infoWin = new google.maps.InfoWindow({
             size: new google.maps.Size(350, 350)
@@ -58,7 +59,7 @@ function main($scope, $http) {
 
     $scope._initTimeline = function(min_time) {
 
-        var timeline = new google.visualization.AnnotatedTimeLine(document.getElementById("timeline"));
+        $scope.timeline = new google.visualization.AnnotatedTimeLine(document.getElementById("timeline"));
 
         var end = new Date().getTime();
         var start = end - 7889000000;
@@ -70,70 +71,64 @@ function main($scope, $http) {
             [new Date(min_time*1000), 0],
             [new Date(), 0]
         ]);
-        timeline.draw(data, {
+        $scope.timeline.draw(data, {
             displayAnnotations: false,
         });
 
-        timeline.setVisibleChartRange(new Date(start), new Date(end));
+        $scope.timeline.setVisibleChartRange(new Date(start), new Date(end));
 
-        google.visualization.events.addListener(timeline, 'rangechange', function() {
-            var range = timeline.getVisibleChartRange();
-            var start = range.start.getTime();
-            var end = range.end.getTime();
-            $http.post("/a/map_data", {start: start/1000, end: end/1000}).success(function(res) {
-                $scope.data = res['data'];
-                $scope._drawMap(start, end);
-            });
+        google.visualization.events.addListener($scope.timeline, 'rangechange', function() {
+        	$scope.load();
         });
 
-        $http.post("/a/map_data", {start: start/1000, end: end/1000}).success(function(res) {
-            $scope.data = res['data'];
-            $scope._drawMap(start, end);
-        });
+    	$scope._loadData(start, end);
 
     }
 
-    $scope._createMarkerListener = function(marker, start, end) {
-
-           google.maps.event.addListener(marker, 'click', function(e) {
-               $http.post("/a/loc_data", {loc_place:marker.point.loc_place, start:start/1000, end:end/1000}).success(function(res) {
-                   $scope.infoWin.close();
-                   var chartDiv = document.createElement("div");
-                   var chart = new google.visualization.BarChart(chartDiv);
-                   var data = Array();
-                   data[0] = Array();
-                   data[0][0] = 'Category';
-                   var colors = [];
-                   for (var i=0; i<res.length; ++i) {
-                       data[i+1] = Array();
-                       data[i+1][0]=res[i].type;
-                       data[0][i+1]='';
-                       var color = $scope.TYPE_COLOR[res[i].type];
-                       colors[i] = color;
-                   }
-                   for (var i=0; i<res.length; ++i) {
-                       for (var j=0; j<res.length; ++j) {
-                           if (i==j) {
-                               data[i+1][j+1] = res[i].sum;
-                           } else {
-                               data[i+1][j+1] = 0;
-                           }
-                       }
-                   }
-                   chart.draw(google.visualization.arrayToDataTable(data), {
-                       width: 300,
-                       height: 200,
-                       legend: {position: 'none'},
-                       isStacked: true,
-                       colors: colors,
-                       title: 'Needs for '+marker.point.loc_place
-                   });
-                   $scope.infoWin.setContent(chartDiv);
-                   $scope.infoWin.open(marker.get('map'), marker);
-               });
-           });
+    $scope._drawChart = function(marker, start, end) {
+		$http.post("/a/loc_data", {loc_place:marker.point.loc_place, start:start/1000, end:end/1000}).success(function(res) {    	
+            $scope.infoWin.close();
+            var chartDiv = document.createElement("div");
+            var chart = new google.visualization.BarChart(chartDiv);
+            var data = Array();
+            data[0] = Array();
+            data[0][0] = 'Category';
+            var colors = [];
+            for (var i=0; i<res.length; ++i) {
+                data[i+1] = Array();
+                data[i+1][0]=res[i].type;
+                data[0][i+1]='';
+                var color = $scope.TYPE_COLOR[res[i].type];
+                colors[i] = color;
+            }
+            for (var i=0; i<res.length; ++i) {
+                for (var j=0; j<res.length; ++j) {
+                    if (i==j) {
+                        data[i+1][j+1] = res[i].sum;
+                    } else {
+                        data[i+1][j+1] = 0;
+                    }
+                }
+            }
+            chart.draw(google.visualization.arrayToDataTable(data), {
+                width: 300,
+                height: 200,
+                legend: {position: 'none'},
+                isStacked: true,
+                colors: colors,
+                title: 'Needs for '+marker.point.loc_place
+            });
+            $scope.infoWin.setContent(chartDiv);
+            $scope.infoWin.open(marker.get('map'), marker);
+		});
     }
     
+    $scope._createMarkerListener = function(marker, start, end) {
+    	google.maps.event.addListener(marker, 'click', function(e) {
+    		$scope._drawChart(marker, start, end);
+    	});
+    }
+
     $scope._drawMap = function(start, end) {
         if ($scope.map==null) {
             var opts = {
@@ -155,8 +150,6 @@ function main($scope, $http) {
             var type = $scope.TYPES[i];
             $scope.markers[type] = Array();
         }
-        if ($scope.stypes[type]) {
-        }
         for (var i=0; i<$scope.data.length; ++i) {
             var point = $scope.data[i];
             if (point.loc) {
@@ -168,6 +161,7 @@ function main($scope, $http) {
 					draggable: false,
 					icon: url,
 					clickable: true,
+					map: $scope.map
                  });
                  marker.point = point;
                  $scope._createMarkerListener(marker, start, end);
@@ -176,22 +170,32 @@ function main($scope, $http) {
                  } else {
                 	 	$scope.markers[type] = [marker];
                  }
-                 if ($scope.stypes[type]) {
+                 /*if ($scope.stypes[type]) {
  					marker.setMap($scope.map);
-                 }
+                 }*/
             }
         }
         
     }
 
-    $scope.changeTypes = function(type) {
-        for (var i=0; i<$scope.markers[type].length; ++i) {
-            if ($scope.stypes[type]) {
-                $scope.markers[type][i].setMap($scope.map);
-            } else {
-                $scope.markers[type][i].setMap(null);
-            }
-        }
+    $scope.load = function() {
+        var range = $scope.timeline.getVisibleChartRange();
+        var start = range.start.getTime();
+        var end = range.end.getTime();
+        $scope._loadData(start, end)
+    }
+
+    $scope._loadData = function(start, end) {
+    	var types = Array()
+    	for(var type in $scope.stypes) {
+    		if ($scope.stypes[type]) {
+    			 types.push(type);
+    		}
+    	}
+	    $http.post("/a/map_data", {start: start/1000, end: end/1000, types: types}).success(function(res) {
+	        $scope.data = res['data'];
+	        $scope._drawMap(start, end);
+	    });
     }
 
     $scope.selectContinent = function(continent) {

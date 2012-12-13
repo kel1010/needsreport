@@ -1,6 +1,6 @@
 from pymongo import Connection, GEO2D
 
-from needs.contrib.mcache import cache_result
+from needsapp.contrib.mcache import cache_result
 
 connection = Connection('localhost', 27017)
 db = connection.needs_db

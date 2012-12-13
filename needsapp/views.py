@@ -1,8 +1,10 @@
 from django.http import HttpResponse
 from django.template.defaultfilters import slugify
 
-from needs.mongodb import db, get_types_map, get_types
-from needs.loc_query import geocode
+from needsapp.mongodb import db, get_types_map, get_types
+from needsapp.loc_query import geocode
+
+from bson.code import Code
 
 from twilio import twiml
 
@@ -10,6 +12,8 @@ import time
 import json
 import math
 import copy
+import base64
+import uuid
 
 CONTINENTS = [
     {'continent': 'Africa', 'latlng': [7.19, 21.10], 'zoom':3, 'abbrev': 'AF', 'countries': []},
@@ -19,6 +23,9 @@ CONTINENTS = [
     {'continent': 'North America', 'latlng': [46.07, -100.55], 'zoom': 3, 'abbrev': 'NA', 'countries': []},
     {'continent': 'South America', 'latlng': [-14.60, -57.66], 'zoom': 3, 'abbrev': 'SA', 'countries': []}
 ];
+
+def uid_gen():
+    return base64.urlsafe_b64encode(uuid.uuid4().bytes)[:-2]
 
 def _find_type(request):
     slug = slugify(request.REQUEST.get('Body', ''))
@@ -105,17 +112,6 @@ def _loc_defined(points):
 
     return True
 
-def loc_data(request):
-    req = json.loads(request.raw_post_data)
-    loc_place = req['loc_place']
-    start = int(req.get('start', 0))
-    end = int(req.get('end', time.time()))
-    condition = {'loc_place':loc_place, 'created':{'$lte': end, '$gte': start}}    
-    locs = db.needs.group(key={'type':True}, condition=condition, reduce='function(a,c) {c.sum+=1}', initial={'sum':0})
-    locs.sort(lambda a,b: int(b['sum']-a['sum']))
-
-    return HttpResponse(json.dumps(locs), content_type='application/json')
-
 def init_data(request):
     types = get_types()
     min_time_res = db.needs.find({'created':{'$exists': True}}).sort('created', 1).limit(1)
@@ -135,7 +131,7 @@ def init_data(request):
                 else:
                     print 'No geocode for: %s' % country['country']
                     country['latlng'] = None
-                db.countries.save(country)   
+                db.countries.save(country)
 
             if 'area' in country and country['area']>0:
                 pop_log = int(math.log(abs(country['area']), 12))
@@ -143,18 +139,63 @@ def init_data(request):
                 pop_log = 4
 
             continent['countries'].append({'country': country['country'], 'latlng': country['latlng'], 'zoom': 10-pop_log})
-    
+
     return HttpResponse(json.dumps(dict(types=types, min_time=min_time, continents=continents)), content_type='application/json')    
 
 def map_data(request):
     req = json.loads(request.raw_post_data)
     start = int(req.get('start', 0))
     end = int(req.get('end', time.time()))
+    _types = req.get('types', None)
     condition = {'loc':{'$exists': True}, 'created':{'$lte': end, '$gte': start}}
-    locs = db.needs.group(key={'type':True, 'loc':True, 'loc_place':True}, condition=condition, reduce='function(a,c) {c.sum+=1}', initial={'sum':0})
-    locs.sort(lambda a,b: int(b['sum']-a['sum']))
+    if _types:
+        condition['type'] = {'$in': _types}
 
-    data = []    
+    # this map/reduce groups needs by location
+    mapper = Code("""
+        function() {
+            var key = this.type+this.loc_place;
+            emit(key, {sum:1, type:this.type, loc:this.loc, loc_place:this.loc_place});
+        }
+    """)
+
+    reducer = Code("""
+        function(key, values) {
+            var sum = 0;
+            for (var i = 0; i < values.length; i++) {
+                sum += values[i].sum;
+            }
+            return {sum: sum, type: values[0].type, loc: values[0].loc, loc_place: values[0].loc_place}
+        }
+    """)
+
+    # this map/reduce picks the highest needs for a location
+    mapper2 = Code("""
+        function() {
+            var key = this.value.loc_place;
+            emit(this.value.loc_place, this.value);
+        }
+    """)
+    
+    reducer2 = Code("""
+        function(key, values) {
+            var max = values[0];
+            for (var i=1; i<values.length; ++i) {
+                if (max.sum < values[i].sum) {
+                    max = values[i];
+                } 
+            }
+            return max;
+        }
+    """)
+
+    tmp = db.needs.map_reduce(mapper, reducer, 'tmp_%s' % uid_gen(), query=condition)
+    res = tmp.map_reduce(mapper2, reducer2, 'tmp_%s' % uid_gen())
+    locs = []
+    for doc in res.find():
+        locs.append(doc['value'])
+
+    data = []
     for loc in locs:
         value = int(math.log(loc['sum'], 10))+1
         if value>5:
@@ -163,7 +204,44 @@ def map_data(request):
         loc['type'] = loc['type'].title()
         data.append(loc)
 
+    tmp.drop()
+    res.drop()
+
     return HttpResponse(json.dumps(dict(types=get_types(), data=data)), content_type='application/json')
+
+def loc_data(request):
+    req = json.loads(request.raw_post_data)
+    loc_place = req['loc_place']
+    start = int(req.get('start', 0))
+    end = int(req.get('end', time.time()))
+    
+    mapper = Code("""
+        function() {
+            emit(this.type, 1);
+        }
+    """)
+
+    reducer = Code("""
+        function(key, values) {
+            var sum = 0;
+            for (var i = 0; i < values.length; i++) {
+                sum += values[i];
+            }
+            return sum;
+        }
+    """)    
+    
+    condition = {'loc_place':loc_place, 'created':{'$lte': end, '$gte': start}}    
+    res = db.needs.map_reduce(mapper, reducer, 'tmp_%s' % uid_gen(), query=condition)
+
+    data = []
+    for doc in res.find():
+        data.append(dict(type=doc['_id'], sum=int(doc['value'])))
+
+    res.drop()
+    data.sort(lambda a,b: b['sum']-a['sum'])
+
+    return HttpResponse(json.dumps(data), content_type='application/json')
 
 def countries(request):
     req = json.loads(request.raw_post_data)

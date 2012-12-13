@@ -3,10 +3,8 @@ from django.conf import settings
 
 from django.contrib import admin
 
-from needs import views
+from needsapp import views
  
-import os
-
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
 # admin.autodiscover()

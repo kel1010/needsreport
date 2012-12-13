@@ -31,10 +31,10 @@
 <div id="main">
     <div id="timeline"></div>
 	<div id="map">Loading...</div>
-	<ul ng-init="stypes=[]" id="types">
+	<ul id="types">
 	    <li ng-repeat="type in TYPES">
 	        <label>
-	            <input class="type" type="checkbox" ng-model="stypes[type]" ng-init="stypes[type]=true" ng-change="changeTypes(type)">
+	            <input class="type" type="checkbox" ng-model="stypes[type]" ng-init="stypes[type]=true" ng-change="load()">
 	            <span>
 	                <img src="images/{{type}}3.png"/><br/>
 	                {{type}}

@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 
-from needs.mongodb import db, get_types
-from needs.loc_query import geocode
+from needsapp.mongodb import db, get_types
+from needsapp.loc_query import geocode
 
 import random 
 import time
