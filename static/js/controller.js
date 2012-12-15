@@ -121,7 +121,7 @@ function main($scope, $http) {
             $scope.infoWin.setContent(chartDiv);
             $scope.infoWin.open(marker.get('map'), marker);
 		});
-    }
+    }  
     
     $scope._createMarkerListener = function(marker, start, end) {
     	google.maps.event.addListener(marker, 'click', function(e) {
@@ -131,25 +131,26 @@ function main($scope, $http) {
 
     $scope._drawMap = function(start, end) {
         if ($scope.map==null) {
+        	var animation = google.maps.Animation.DROP;
             var opts = {
                 zoom: 2,
                 center: new google.maps.LatLng(20, 12),
-                mapTypeId: google.maps.MapTypeId.ROADMAP
+                mapTypeId: google.maps.MapTypeId.ROADMAP,
+                overviewMapControl: true,
+                overviewMapControlOptions: {opened: true},
+                mapTypeControl: false,
+                streetViewControl: false
+                //panControlOptions: { position: google.maps.ControlPosition.RIGHT_CENTER },
+                //zoomControlOptions: { position: google.maps.ControlPosition.RIGHT_CENTER }
             }
             $scope.map = new google.maps.Map(document.getElementById("map"), opts);
         } else {
-            for (var i=0; i<$scope.TYPES.length; ++i) {
-                var type = $scope.TYPES[i];
-                for (var j=0; j<$scope.markers[type].length; ++j) {
-                    $scope.markers[type][j].setMap(null);
-                }
+        	var animation = google.maps.Animation.None;
+            for (var i=0; i<$scope.markers.length; ++i) {
+                $scope.markers[i].setMap(null);
             }
         }
         $scope.markers = Array();
-        for (var i=0; i<$scope.TYPES.length; ++i) {
-            var type = $scope.TYPES[i];
-            $scope.markers[type] = Array();
-        }
         for (var i=0; i<$scope.data.length; ++i) {
             var point = $scope.data[i];
             if (point.loc) {
@@ -161,18 +162,13 @@ function main($scope, $http) {
 					draggable: false,
 					icon: url,
 					clickable: true,
-					map: $scope.map
-                 });
-                 marker.point = point;
-                 $scope._createMarkerListener(marker, start, end);
-                 if (type in $scope.markers) {
-                       $scope.markers[type].push(marker);
-                 } else {
-                	 	$scope.markers[type] = [marker];
-                 }
-                 /*if ($scope.stypes[type]) {
- 					marker.setMap($scope.map);
-                 }*/
+					map: $scope.map,
+					animation: animation,
+                });
+
+                marker.point = point;
+                $scope._createMarkerListener(marker, start, end);
+                $scope.markers.push(marker);
             }
         }
         
@@ -232,4 +228,28 @@ function main($scope, $http) {
         }
     }
 
+    $scope.showControls = function() {
+    	var mapDiv = document.getElementById("left");
+    	$scope.controlsLeft += 10;
+    	if ($scope.controlsLeft>=0) {
+    		$scope.$apply($scope.controlsLeft=0);
+        	mapDiv.style.left = $scope.controlsLeft+"px";
+    	} else {
+        	mapDiv.style.left = $scope.controlsLeft+"px";
+        	window.setTimeout($scope.showControls, 5);
+    	}
+    }
+
+    $scope.hideControls = function() {
+    	var mapDiv = document.getElementById("left");
+    	$scope.controlsLeft -= 20;
+    	if ($scope.controlsLeft<=-250) {
+    		$scope.$apply($scope.controlsLeft=-250);
+        	mapDiv.style.left = $scope.controlsLeft+"px";
+    	} else {
+        	mapDiv.style.left = $scope.controlsLeft+"px";
+        	window.setTimeout($scope.hideControls, 5);
+    	}
+    }
+    
 }

@@ -1,46 +1,46 @@
-<div id="controls" ng-init="control='locations'">
-    <div id="logo">
-        <img src="images/logo.jpg"/>
-    </div>
-    <button class="title" ng-click="control='locations'">LOCATIONS</button>
-    <ul id="continents" ng-init="selectedContinent=null" ng-show="control=='locations'" class="content">
-        <li ng-repeat="continent in CONTINENTS">
-            <button class="continent" ng-click="selectContinent(continent)">{{continent.continent}}</button>
-            <ul class="countries" ng-show="selectedContinent==continent">
-                <li ng-repeat="country in continent.countries">
-                    <button class="country" ng-click="selectCountry(country)">{{country.country}}</button>
-                </li>
-            </ul>
-        </li>
-    </ul>
-    <button class="title" ng-click="control='layers'">LAYERS</button>
-    <ul id="layers" ng-show="control=='layers'" ng-init="selectedLayer=null" class="content">
-        <li ng-repeat="layer in LAYERS">
-            <button class="layer" ng-click="selectLayer(layer)">{{layer.name}}</button>
-        </li>
-    </ul>
-    <button class="title" ng-click="control='values'">VALUES</button>
-    <ul id="values" ng-show="control=='values'" class="content">
-        <li><table><tr><td><img src="images/Water1.png"/></td></tr></table><p>1 - 9 reports</p></li>
-        <li><table><tr><td><div class="img"><img src="images/Water2.png"/></td></tr></table><p>10 - 99 reports</p></li>
-        <li><table><tr><td><div class="img"><img src="images/Water3.png"/></td></tr></table><p>100 - 999 reports</p></li>
-        <li><table><tr><td><div class="img"><img src="images/Water4.png"/></td></tr></table><p>1000 - 9999 reports</p></li>
-        <li><table><tr><td><div class="img"><img src="images/Water5.png"/></td></tr></table><p>10000+ reports</p></li>
-    </ul>
-</div>
 <div id="main">
-    <div id="timeline"></div>
-	<div id="map">Loading...</div>
+    <div id="map"></div>
+	<div id="left" ng-init="control='locations'; controlsLeft=-250" >
+        <div id="controls">
+		    <button class="title" ng-click="control='locations'">LOCATIONS</button>
+		    <ul id="continents" ng-init="selectedContinent=null" ng-show="control=='locations'" class="content">
+		        <li ng-repeat="continent in CONTINENTS">
+		            <button class="continent" ng-click="selectContinent(continent)">{{continent.continent}}</button>
+		            <ul class="countries" ng-show="selectedContinent==continent">
+		                <li ng-repeat="country in continent.countries">
+		                    <button class="country" ng-click="selectCountry(country)">{{country.country}}</button>
+		                </li>
+		            </ul>
+		        </li>
+		    </ul>
+		    <button class="title" ng-click="control='layers'">LAYERS</button>
+		    <ul id="layers" ng-show="control=='layers'" ng-init="selectedLayer=null" class="content">
+		        <li ng-repeat="layer in LAYERS">
+		            <button class="layer" ng-click="selectLayer(layer)">{{layer.name}}</button>
+		        </li>
+		    </ul>
+		    <button class="title" ng-click="control='values'">VALUES</button>
+		    <ul id="values" ng-show="control=='values'" class="content">
+		        <li><table><tr><td><img src="images/Water1.png"/></td></tr></table><p>1 - 9 reports</p></li>
+		        <li><table><tr><td><div class="img"><img src="images/Water2.png"/></td></tr></table><p>10 - 99 reports</p></li>
+		        <li><table><tr><td><div class="img"><img src="images/Water3.png"/></td></tr></table><p>100 - 999 reports</p></li>
+		        <li><table><tr><td><div class="img"><img src="images/Water4.png"/></td></tr></table><p>1000 - 9999 reports</p></li>
+		        <li><table><tr><td><div class="img"><img src="images/Water5.png"/></td></tr></table><p>10000+ reports</p></li>
+		    </ul>
+	    </div>
+	    <button class="switch" ng-click="showControls()" ng-show="controlsLeft<0">&gt;</button>
+	    <button class="switch" ng-click="hideControls()" ng-show="controlsLeft>=0">&lt;</button>    
+    </div>
 	<ul id="types">
 	    <li ng-repeat="type in TYPES">
 	        <label>
 	            <input class="type" type="checkbox" ng-model="stypes[type]" ng-init="stypes[type]=true" ng-change="load()">
 	            <span>
-	                <img src="images/{{type}}3.png"/><br/>
+	                <img src="images/{{type}}2.png"/><br/>
 	                {{type}}
 	            </span>
 	        </label>
 	    </li>
 	</ul>
-	<div class="clear"></div>
+    <div id="timeline"></div>
 </div>

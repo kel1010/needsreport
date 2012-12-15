@@ -5,6 +5,8 @@ html {
 }
 
 body {
+	margin: 0;
+	padding: 0;
     font-family: Arial;
     background: #ddd;
 }
@@ -13,87 +15,153 @@ body {
     clear: both;
 }
 
+#top {
+	height: 90px;
+    background: #55a;
+    white-space: nowrap;
+    min-width: 700px;
+}
+
+div#logo {
+    padding: 10px 0 10px 30px;
+    float: left;
+}
+
+div#top div#buttons {
+    float: right;
+    margin-right: 10px;
+    height: 100%;
+    white-space: nowrap;
+}
+
+div#top a {
+	float: left;
+	width: 150px;
+	height: 100%;
+    background: #55a;
+    border: 1px solid #fff;
+    color: #fff;
+    font-size: 18px;
+    text-decoration:none;
+    text-align: center;
+    vertical-align: middle;
+}
+
+div#top a p {
+	padding-top: 35px;
+}
+
+div#top a:hover {
+    background: #338;	
+}
+
 #app {
-    height: 650px;
+    height: 600px;
     border-bottom: 4px solid #888;    
+}
+
+#app div#loading {
+	text-align: center;
+	margin-top: 290px;
+	height: 50px;
+	font-weight: bold;
+	font-size: 20px;
 }
 
 #main {
 	width: auto;
-	height: 650px;
-	margin-left: 250px;
-    border-left: 4px solid #888;
-    min-width: 700px;
-    
+	height: 600px;
+    display: block;
+    position: relative;
 }
+
 #map {
     width: auto;
-    height: 490px;
+    height: 600px;
 }
 
 #map img {
     max-width: none;
 }
 
-#controls {
+#left {
+    position: absolute;
     float: left;
+    width: 270px;
+    left: -250px;
+    top: 0;
+    background: #404040;
+    display: block;
+    height: 565px;
+    opacity:0.9;
+    filter:alpha(opacity=90);    
+}
+
+#controls {
+	width: 250px;
+}
+
+button.switch {
+	position: absolute;
+	top: 0px;
+	left: 250px;
+	width: 20px;
+	height: 565px;
+	float: right;
+	font-weight: bold;
+}
+
+#controls ul {
     width: 250px;
-    height: 562px;
-    background: #000080;
 }
 
 #controls .content {
-    height: 440px;
-    background: #000080;
+    height: 460px;
+    width: 250px;
 }
 
 #controls button.title {
     font-size: 16px;
     font-weight: bold;
     width: 100%;
-    background: #444;
+    background: #222;
     color: white;
     text-align: center;
-    border-radius: 5px;
     padding: 6px;
-}
-
-#controls div#logo {
-    margin: 10px auto;
-    text-align: center;
+    border: 0;
 }
 
 #controls ul {
     margin: 0;
 }
 
-#controls button.continent, #controls button.layer{
+#controls button.continent, #controls button.layer {
     width: 100%;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: bold;
-    background: #666;
+    background: #444;
     color: white;
     text-align: left;
+    border:0;
 }
 
 #controls button.country {
     width: 100%;
-    font-size: 12px;
-    font-weight: bold;
-    background: #888;
+    font-size: 16px;
+    background: #666;
     color: white;
     text-align: left;
+    border: 0;
 }
 
 #controls ul.countries {
     overflow-y: scroll;
     overflow-x: hidden;
-    height: 275px;
+    height: 310px;
 }
 
 #controls ul#values {
     text-align: left;
-    border: 1px solid #cccccc;
     color: #fff;
 }
 
@@ -122,34 +190,44 @@ body {
 }
 
 ul#types {
+	position: absolute;
+	width: 75px;
+	top: 0px;
+	right: 1px;
     margin: 0 0 10px 0;
     text-align: center;
+    opacity:0.8;
+    filter:alpha(opacity=80);    
 }
 
 ul#types li {
-    float: left;
     font-size: 14px;
+    float: left;
+}
+
+ul#types li button.selected {
+    background: #404040;
+    color: #F7F7F7;
 }
 
 ul#types li label {
-    width: 85px;
-    height: 70px;
+    width: 75px;
+    height: 50px;
     background:#CCCCCC;
-    border:1px solid #D0D0D0;
+    border:1px solid #808080;
     display: block;
     overflow: none;
 }
 
 ul#types li label span {
     text-align:center;
-    font-size: 14px;
+    font-size: 12px;
     padding:5px 0px;
     display:block;
 }
 
 ul#types li label input {
-    position: absolute;
-    top: -20px;
+    display: none;
 }
 
 ul#types li label input:checked+span {
@@ -157,12 +235,13 @@ ul#types li label input:checked+span {
     color: #F7F7F7;
 }
 
-div#info {
-	margin-top: 20px;
+div#bottom {
+	position: absolute;
+	top: 810px;
     font-size: 12px;
 }
 
-div#info div#about {
+div#bottom div#about {
     color: #071e84;
     font-weight: bold;
     width: 240px;
@@ -170,23 +249,23 @@ div#info div#about {
     margin-left: 10px;
 }
 
-div#info div#text {
+div#bottom div#text {
 	margin-left: 280px;
 }
 
-div#info div#text div {
+div#bottom div#text div {
 	float: left;
 	width: 40%;
 	margin: 0 5% 0 5%;
 }
 
-div#info h2 {
+div#bottom h2 {
     color: #071e84;
     font-weight: bold;
     font-size: 16px;
 }
 
-div#info span#number {
+div#bottom span#number {
     color: #071e84;
     font-weight: bold;
     white-space:nowrap; 

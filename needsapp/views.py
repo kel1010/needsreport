@@ -214,7 +214,7 @@ def loc_data(request):
     loc_place = req['loc_place']
     start = int(req.get('start', 0))
     end = int(req.get('end', time.time()))
-    
+
     mapper = Code("""
         function() {
             emit(this.type, 1);
@@ -229,8 +229,8 @@ def loc_data(request):
             }
             return sum;
         }
-    """)    
-    
+    """)
+
     condition = {'loc_place':loc_place, 'created':{'$lte': end, '$gte': start}}    
     res = db.needs.map_reduce(mapper, reducer, 'tmp_%s' % uid_gen(), query=condition)
 
