@@ -39,7 +39,8 @@ div#top a {
 	width: 150px;
 	height: 100%;
     background: #55a;
-    border: 1px solid #fff;
+    border-left: 1px solid #fff;
+    border-right: 1px solid #fff;
     color: #fff;
     font-size: 18px;
     text-decoration:none;
@@ -56,19 +57,31 @@ div#top a:hover {
 }
 
 #app {
+	position: relative;
     height: 600px;
     border-bottom: 4px solid #888;    
 }
 
 #app div#loading {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin: -30px 0 0 -80px;
 	text-align: center;
-	margin-top: 290px;
-	height: 50px;
 	font-weight: bold;
 	font-size: 20px;
+	z-index: 100;
+	border-radius: 5px;
+	background: #333;
+	padding: 20px 0;
+	width: 160px;
+    color: white;
+    opacity:0.75;
+    filter:alpha(opacity=75);    
 }
 
 #main {
+	position: relative;
 	width: auto;
 	height: 600px;
     display: block;
@@ -239,6 +252,7 @@ div#bottom {
 	position: absolute;
 	top: 810px;
     font-size: 12px;
+    height: 150px;
 }
 
 div#bottom div#about {
