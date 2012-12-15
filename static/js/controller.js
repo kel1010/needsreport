@@ -193,12 +193,12 @@ function main($scope, $http) {
     			 types.push(type);
     		}
     	}
-    	
+
         window.setTimeout(document.getElementById('loading').style.visibility='visible', 500)        
 	    $http.post("/a/map_data", {start: start/1000, end: end/1000, types: types}).success(function(res) {
 	        $scope.data = res['data'];
 	        $scope._drawMap(start, end);
-	        document.getElementById('loading').style.visibility='hidden';        
+	        document.getElementById('loading').style.visibility='hidden';
 	    });
     }
 

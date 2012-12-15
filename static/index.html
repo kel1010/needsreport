@@ -17,7 +17,7 @@
 	    </div>
 	    <div id="buttons">
 	        <a><p>LATEST NEEDS</p></a>
-            <a><p>ABOUT US</p></a>
+            <a href=""#" id="about_link"><p>ABOUT US</p></a>
         </div>
     </div>
     <div class="clear"></div>
@@ -53,6 +53,13 @@
     <script type="text/javascript" src="//www.google.com/jsapi"></script>
     <script type="text/javascript">
         google.load('visualization', '1', {packages: ['corechart', 'annotatedtimeline']});
+        window.onload = function(e) {
+        	var link = document.getElementById("about_link");
+        	link.onclick = function() {
+        		window.scrollTo(800,800);
+        	};
+        	e.preventDefault();
+        }
     </script>
     <script type="text/javascript">
         var _gaq = _gaq || [];
