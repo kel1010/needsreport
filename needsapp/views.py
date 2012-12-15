@@ -1,5 +1,6 @@
 from django.http import HttpResponse
 from django.template.defaultfilters import slugify
+from django.views.decorators.cache import cache_page
 
 from needsapp.mongodb import db, get_types_map, get_types
 from needsapp.loc_query import geocode
@@ -143,6 +144,7 @@ def _chart_data():
 
     return data
 
+@cache_page(7200)
 def init_data(request):
     types = get_types()
     min_time_res = db.needs.find({'created':{'$exists': True}}).sort('created', 1).limit(1)

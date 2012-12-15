@@ -153,6 +153,8 @@ CACHES = {
     },
     'location': {
         'BACKEND': 'needs.contrib.mongodb_cache.MongoDBCache',
-        'LOCATION' : 'needscache_location'
+        'LOCATION': 'needscache_location',
+        'OPTIONS': {
+                    }
     }
 }
