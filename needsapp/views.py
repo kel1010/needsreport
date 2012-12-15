@@ -114,7 +114,6 @@ def _loc_defined(points):
 
     return True
 
-#@cache_result(lambda address: hashlib.md5(address).hexdigest(), expires=7200)
 def _chart_data():
     # this map/reduce groups needs by month
     mapper = Code("""
@@ -266,7 +265,7 @@ def loc_data(request):
         }
     """)
 
-    condition = {'loc_place':loc_place, 'created':{'$lte': end, '$gte': start}}    
+    condition = {'loc_place':loc_place, 'created':{'$lte': end, '$gte': start}}
     res = db.needs.map_reduce(mapper, reducer, 'tmp_%s' % uid_gen(), query=condition)
 
     data = []
@@ -278,9 +277,20 @@ def loc_data(request):
 
     return HttpResponse(json.dumps(data), content_type='application/json')
 
-def countries(request):
-    req = json.loads(request.raw_post_data)
-    continent = req.get('continent', '')    
-    res = map(lambda country: country['country'], db.countries.find({'continent':continent}).sort('country', 1))
+def latest_needs(request):
+    since = request.REQUEST.get('since', None)
+    if since:
+        condition = {'created': {'$gt': int(since)}}
+        sort = ('created', 1)
+    else:
+        condition = {}
+        sort = ('created', -1)
+    res = db.needs.find(condition).sort([sort]).limit(30)
+    data = []
+    for doc in res:
+        data.append(dict(created=doc['created'], loc_place=doc['loc_place'], loc=doc['loc'], type=doc['type']))
 
-    return HttpResponse(json.dumps(res), content_type='application/json')
+    if not since:
+        data.reverse()
+
+    return HttpResponse(json.dumps(data), content_type='application/json')

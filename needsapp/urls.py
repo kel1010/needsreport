@@ -24,5 +24,6 @@ urlpatterns = patterns('',
     url(r'^a/map_data$', views.map_data),
     url(r'^a/loc_data$', views.loc_data),
     url(r'^a/init_data$', views.init_data),
-    url(r'^a/countries$', views.countries),
+    url(r'^a/init_data$', views.init_data),
+    url(r'^a/latest_needs', views.latest_needs),
 )
