@@ -54,12 +54,12 @@ function main($scope, $http) {
             }
         ];
 
-        $scope._initTimeline(res['min_time']);
-        
+        $scope._initTimeline(res['min_time'], res['chart_data']);
+
         document.getElementById('loading').style.visibility='hidden';        
     });
 
-    $scope._initTimeline = function(min_time) {
+    $scope._initTimeline = function(min_time, chart_data) {
 
         $scope.timeline = new google.visualization.AnnotatedTimeLine(document.getElementById("timeline"));
 
@@ -68,11 +68,14 @@ function main($scope, $http) {
 
         var data = new google.visualization.DataTable();
         data.addColumn('date', 'Date');
-        data.addColumn('number', 'count');
-        data.addRows([
-            [new Date(min_time*1000), 0],
-            [new Date(), 0]
-        ]);
+        data.addColumn('number', 'Needs');
+        var rows = Array();
+        for (var i=0; i<chart_data.length; ++i) {
+        	var cd = chart_data[i];
+        	rows.push([new Date(cd.time), cd.sum]);
+        }
+        rows.push([new Date(), null]);
+        data.addRows(rows);
         $scope.timeline.draw(data, {
             displayAnnotations: false,
         });

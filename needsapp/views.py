@@ -14,6 +14,7 @@ import math
 import copy
 import base64
 import uuid
+import hashlib
 
 CONTINENTS = [
     {'continent': 'Africa', 'latlng': [7.19, 21.10], 'zoom':3, 'abbrev': 'AF', 'countries': []},
@@ -112,6 +113,36 @@ def _loc_defined(points):
 
     return True
 
+#@cache_result(lambda address: hashlib.md5(address).hexdigest(), expires=7200)
+def _chart_data():
+    # this map/reduce groups needs by month
+    mapper = Code("""
+        function() {
+            var d = new Date(this.created*1000);
+            var key = new Date(d.getUTCFullYear(), d.getUTCMonth(), 0, 0, 0, 0).getTime();
+            emit(key, 1);
+        }
+    """)
+
+    reducer = Code("""
+        function(key, values) {
+            var sum = 0;
+            for (var i = 0; i < values.length; i++) {
+                sum += values[i];
+            }
+            return sum;
+        }
+    """)
+
+    data = []
+    res = db.needs.map_reduce(mapper, reducer, 'tmp_%s' % uid_gen())
+    for doc in res.find():
+        data.append(dict(time=int(doc['_id']), sum=int(doc['value'])))
+
+    res.drop()
+
+    return data
+
 def init_data(request):
     types = get_types()
     min_time_res = db.needs.find({'created':{'$exists': True}}).sort('created', 1).limit(1)
@@ -140,7 +171,9 @@ def init_data(request):
 
             continent['countries'].append({'country': country['country'], 'latlng': country['latlng'], 'zoom': 10-pop_log})
 
-    return HttpResponse(json.dumps(dict(types=types, min_time=min_time, continents=continents)), content_type='application/json')    
+    chart_data = _chart_data()
+    params = dict(types=types, min_time=min_time, continents=continents, chart_data=chart_data)
+    return HttpResponse(json.dumps(params), content_type='application/json')    
 
 def map_data(request):
     req = json.loads(request.raw_post_data)
