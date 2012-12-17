@@ -68,15 +68,17 @@ function main($scope, $http) {
             chart: {
                 renderTo: 'timeline',
                 alignTicks: false,
+    			type: "column",
                 events: {
                 	redraw: function() {
                 		$scope.load();
-                		//alert(this.xAxis[0].min+":"+this.xAxis[0].max);
                 	}
-                }
-    	
+                }    	
             },
             xAxis: {
+            	tickWidth: 0,
+            	tickLength: 0,
+            	tickPosition: 'inside',
                 labels: {enabled: false}
             },
             yAxis: {
@@ -86,18 +88,8 @@ function main($scope, $http) {
                 selected: 0
             },
             series: [{
-                type: 'column',
                 name: 'Needs',
                 data: chart_data,
-                dataGrouping: {
-                    units: [[
-                        'month', // unit name
-                        [1] // allowed multiples
-                    ], [
-                        'month',
-                        [1, 2, 3, 4, 6]
-                    ]]
-                }
             }]
     	});
 

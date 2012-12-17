@@ -16,7 +16,7 @@ body {
 	height: 90px;
     background: #55a;
     white-space: nowrap;
-    min-width: 700px;
+    min-width: 800px;
 }
 
 div#logo {
@@ -31,7 +31,7 @@ div#top div#buttons {
     white-space: nowrap;
 }
 
-div#top a {
+div#top div#buttons a {
 	float: left;
 	width: 150px;
 	height: 100%;
@@ -45,12 +45,23 @@ div#top a {
     vertical-align: middle;
 }
 
-div#top a p {
+div#top div#buttons a p {
 	padding-top: 35px;
 }
 
 div#top a:hover {
     background: #338;	
+}
+
+div#top div#tagline {
+	font-size: 16px;
+	float: left;
+	color: #fff;
+	margin-left: 25px;
+}
+
+div#top div#tagline p {
+	padding-top: 25px;
 }
 
 #app {
