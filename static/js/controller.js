@@ -59,34 +59,49 @@ function main($scope, $http) {
         document.getElementById('loading').style.visibility='hidden';        
     });
 
+    $scope.$on('$viewContentLoaded', function(event) {
+        window._gaq.push(['_trackPageview', window.location.path]);
+    });
+
     $scope._initTimeline = function(min_time, chart_data) {
+    	$scope.timeline = new Highcharts.StockChart({
+            chart: {
+                renderTo: 'timeline',
+                alignTicks: false,
+                events: {
+                	redraw: function() {
+                		$scope.load();
+                		//alert(this.xAxis[0].min+":"+this.xAxis[0].max);
+                	}
+                }
+    	
+            },
+            xAxis: {
+                labels: {enabled: false}
+            },
+            yAxis: {
+                labels: {enabled: false}
+            },            
+            rangeSelector: {
+                selected: 0
+            },
+            series: [{
+                type: 'column',
+                name: 'Needs',
+                data: chart_data,
+                dataGrouping: {
+                    units: [[
+                        'month', // unit name
+                        [1] // allowed multiples
+                    ], [
+                        'month',
+                        [1, 2, 3, 4, 6]
+                    ]]
+                }
+            }]
+    	});
 
-        $scope.timeline = new google.visualization.AnnotatedTimeLine(document.getElementById("timeline"));
-
-        var end = new Date().getTime();
-        var start = end - 7889000000;
-
-        var data = new google.visualization.DataTable();
-        data.addColumn('date', 'Date');
-        data.addColumn('number', 'Needs');
-        var rows = Array();
-        for (var i=0; i<chart_data.length; ++i) {
-        	var cd = chart_data[i];
-        	rows.push([new Date(cd.time), cd.sum]);
-        }
-        rows.push([new Date(), null]);
-        data.addRows(rows);
-        $scope.timeline.draw(data, {
-            displayAnnotations: false,
-        });
-
-        $scope.timeline.setVisibleChartRange(new Date(start), new Date(end));
-
-        google.visualization.events.addListener($scope.timeline, 'rangechange', function() {
-        	$scope.load();
-        });
-
-    	$scope._loadData(start, end);
+    	$scope._loadData($scope.timeline.xAxis[0].min, $scope.timeline.xAxis[0].max);
 
     }
 
@@ -180,10 +195,7 @@ function main($scope, $http) {
     }
 
     $scope.load = function() {
-        var range = $scope.timeline.getVisibleChartRange();
-        var start = range.start.getTime();
-        var end = range.end.getTime();
-        $scope._loadData(start, end)
+        $scope._loadData($scope.timeline.xAxis[0].min, $scope.timeline.xAxis[0].max);
     }
 
     $scope._loadData = function(start, end) {

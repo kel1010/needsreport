@@ -1,14 +1,11 @@
 <style type="text/css">
 
 html {
-    background: #ddd;
 }
 
 body {
-	margin: 0;
-	padding: 0;
     font-family: Arial;
-    background: #ddd;
+    background: #888;
 }
 
 .clear {
@@ -198,8 +195,7 @@ button.switch {
 }
 
 #timeline {
-    height: 90px;
-    margin-right: 5px;
+    height: 110px;
 }
 
 ul#types {
@@ -250,30 +246,37 @@ ul#types li label input:checked+span {
 
 div#bottom {
 	position: absolute;
-	top: 810px;
+	top: 820px;
     font-size: 12px;
-    height: 150px;
+    margin-bottom: 20px;
 }
 
 div#bottom div#about {
-    color: #071e84;
-    font-weight: bold;
-    width: 240px;
+    color: #ccc;
+    width: 400px;
     float: left;
-    margin-left: 10px;
+    margin-left: 20px;
+    background: #444;
+    padding: 40px;
+    font-size: 14px;
+}
+
+div#bottom div#about h2 {
+	text-align: center;
+    font-size: 24px;
 }
 
 div#bottom div#text {
-	margin-left: 280px;
+	margin-left: 420px;
 }
 
 div#bottom div#text div {
 	float: left;
-	width: 40%;
+	width: 30%;
 	margin: 0 5% 0 5%;
 }
 
-div#bottom h2 {
+div#bottom div#text h2 {
     color: #071e84;
     font-weight: bold;
     font-size: 16px;
@@ -284,5 +287,6 @@ div#bottom span#number {
     font-weight: bold;
     white-space:nowrap; 
 }
+
 
 </style>

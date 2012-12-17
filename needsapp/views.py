@@ -15,7 +15,6 @@ import math
 import copy
 import base64
 import uuid
-import hashlib
 
 CONTINENTS = [
     {'continent': 'Africa', 'latlng': [7.19, 21.10], 'zoom':3, 'abbrev': 'AF', 'countries': []},
@@ -61,7 +60,7 @@ def _new(request):
 
     data['country'] = request.REQUEST.get('FromCountry', None)
 
-    uid = db.needs.save(data)
+    uid = db['needs'].save(data)
 
     if uid:
         if data['country']=='US':
@@ -81,9 +80,9 @@ def _confirm(request, data):
 
     if res:
         place, loc = res[0]
-        db.needs.update({'_id':_uid(request)}, {'$set': {'loc':loc, 'loc_place':place, 'loc_input':location}})
+        db['needs'].update({'_id':_uid(request)}, {'$set': {'loc':loc, 'loc_place':place, 'loc_input':location}})
 
-        count = db.needs.find({'loc_place':place}).count()
+        count = db['needs'].find({'loc_place':place}).count()
 
         if count>1:
             r.sms('There are %s requests for %s in your area.  Hopefully someone will take action.' % (count, data['type'].lower()))
@@ -100,7 +99,7 @@ def _too_old(data):
 
 def sms(request):
     uid = _uid(request)
-    data = db.needs.find_one(dict(_id=uid))
+    data = db['needs'].find_one(dict(_id=uid))
 
     if not data or _too_old(data) or data.get('loc', None):
         return _new(request)
@@ -135,9 +134,9 @@ def _chart_data():
     """)
 
     data = []
-    res = db.needs.map_reduce(mapper, reducer, 'tmp_%s' % uid_gen())
+    res = db['needs'].map_reduce(mapper, reducer, 'tmp_%s' % uid_gen())
     for doc in res.find():
-        data.append(dict(time=int(doc['_id']), sum=int(doc['value'])))
+        data.append([int(doc['_id']), int(doc['value'])])
 
     res.drop()
 
@@ -146,7 +145,7 @@ def _chart_data():
 @cache_page(7200)
 def init_data(request):
     types = get_types()
-    min_time_res = db.needs.find({'created':{'$exists': True}}).sort('created', 1).limit(1)
+    min_time_res = db['needs'].find({'created':{'$exists': True}}).sort('created', 1).limit(1)
     if min_time_res.count()>0:
         min_time = min_time_res[0]['created']
     else:
@@ -154,7 +153,7 @@ def init_data(request):
 
     continents = copy.deepcopy(CONTINENTS)
     for continent in continents:
-        for country in db.countries.find({'continent':continent['abbrev']}).sort('country', 1):
+        for country in db['countries'].find({'continent':continent['abbrev']}).sort('country', 1):
             if 'latlng' not in country or country['latlng']==None:
                 res = geocode(country['country'])
                 if res:
@@ -163,7 +162,7 @@ def init_data(request):
                 else:
                     print 'No geocode for: %s' % country['country']
                     country['latlng'] = None
-                db.countries.save(country)
+                db['countries'].save(country)
 
             if 'area' in country and country['area']>0:
                 pop_log = int(math.log(abs(country['area']), 12))
@@ -223,7 +222,7 @@ def map_data(request):
         }
     """)
 
-    tmp = db.needs.map_reduce(mapper, reducer, 'tmp_%s' % uid_gen(), query=condition)
+    tmp = db['needs'].map_reduce(mapper, reducer, 'tmp_%s' % uid_gen(), query=condition)
     res = tmp.map_reduce(mapper2, reducer2, 'tmp_%s' % uid_gen())
     locs = []
     for doc in res.find():
@@ -266,7 +265,7 @@ def loc_data(request):
     """)
 
     condition = {'loc_place':loc_place, 'created':{'$lte': end, '$gte': start}}
-    res = db.needs.map_reduce(mapper, reducer, 'tmp_%s' % uid_gen(), query=condition)
+    res = db['needs'].map_reduce(mapper, reducer, 'tmp_%s' % uid_gen(), query=condition)
 
     data = []
     for doc in res.find():
@@ -285,7 +284,7 @@ def latest_needs(request):
     else:
         condition = {}
         sort = ('created', -1)
-    res = db.needs.find(condition).sort([sort]).limit(30)
+    res = db['needs'].find(condition).sort([sort]).limit(30)
     data = []
     for doc in res:
         data.append(dict(created=doc['created'], loc_place=doc['loc_place'], loc=doc['loc'], type=doc['type']))
