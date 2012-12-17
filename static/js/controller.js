@@ -106,6 +106,8 @@ function main($scope, $http) {
     }
 
     $scope._drawChart = function(marker) {
+    	var start = $scope.timeline.xAxis[0].min;
+    	var end = $scope.timeline.xAxis[0].max;
 		$http.post("/a/loc_data", {loc_place:marker.point.loc_place, start:start/1000, end:end/1000}).success(function(res) {    	
             $scope.infoWin.close();
             var chartDiv = document.createElement("div");
