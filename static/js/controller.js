@@ -105,7 +105,7 @@ function main($scope, $http) {
 
     }
 
-    $scope._drawChart = function(marker, start, end) {
+    $scope._drawChart = function(marker) {
 		$http.post("/a/loc_data", {loc_place:marker.point.loc_place, start:start/1000, end:end/1000}).success(function(res) {    	
             $scope.infoWin.close();
             var chartDiv = document.createElement("div");
@@ -143,9 +143,9 @@ function main($scope, $http) {
 		});
     }  
     
-    $scope._createMarkerListener = function(marker, start, end) {
+    $scope._createMarkerListener = function(marker) {
     	google.maps.event.addListener(marker, 'click', function(e) {
-    		$scope._drawChart(marker, start, end);
+    		$scope._drawChart(marker);
     	});
     }
 
@@ -171,29 +171,43 @@ function main($scope, $http) {
             }
         }
         $scope.markers = Array();
-        for (var i=0; i<$scope.data.length; ++i) {
-            var point = $scope.data[i];
-            if (point.loc) {
-            	var type = point.type;
-                var url = "images/"+type+($scope.data[i].value)+".png";
-                var latLng = new google.maps.LatLng(point.loc[0], point.loc[1]);            
-                var marker = new google.maps.Marker({
-					position: latLng,
-					draggable: false,
-					icon: url,
-					clickable: true,
-					map: $scope.map,
-					animation: animation,
-                });
-
-                marker.point = point;
-                $scope._createMarkerListener(marker, start, end);
-                $scope.markers.push(marker);
-            }
-        }
-        
+        $scope._drawMarkers(0, animation);
     }
 
+    $scope._drawMarker = function(index, animation) {
+        var point = $scope.data[index];
+        if (point.loc) {
+        	var type = point.type;
+            var url = "images/"+type+(point.value)+".png";
+            var latLng = new google.maps.LatLng(point.loc[0], point.loc[1]);            
+            var marker = new google.maps.Marker({
+				position: latLng,
+				draggable: false,
+				icon: url,
+				clickable: true,
+				map: $scope.map,
+				animation: animation,
+            });
+
+            marker.point = point;
+            $scope._createMarkerListener(marker);
+            $scope.markers.push(marker);
+        }
+    }
+    
+    $scope._drawMarkers = function(index, animation) {
+    	if (index<$scope.data.length) {
+    		if (index<50 && animation==google.maps.Animation.DROP) {
+    			$scope._drawMarker(index, animation);
+    			window.setTimeout(function() {$scope._drawMarkers(index+1, animation);}, 100-index*2);
+    		} else {
+    			for (; index<$scope.data.length; ++index) {
+    				$scope._drawMarker(index, animation);
+    			}
+    		}
+    	}
+    }
+    
     $scope.load = function() {
         $scope._loadData($scope.timeline.xAxis[0].min, $scope.timeline.xAxis[0].max);
     }
