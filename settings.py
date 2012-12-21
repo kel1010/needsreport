@@ -152,14 +152,14 @@ CACHES = {
         'TIMEOUT': 300,
     },
     'location': {
-        'BACKEND': 'needs.contrib.mongodb_cache.MongoDBCache',
+        'BACKEND': 'needsapp.contrib.mongodb_cache.MongoDBCache',
         'LOCATION': 'needscache_location',
         'OPTIONS': {
             'MAX_ENTRIES': 50000,
         }
     },
     'persistent': {
-        'BACKEND': 'needs.contrib.mongodb_cache.MongoDBCache',
+        'BACKEND': 'needsapp.contrib.mongodb_cache.MongoDBCache',
         'LOCATION': 'needscache_persistent',
         'OPTIONS': {
             'MAX_ENTRIES': 50000,
