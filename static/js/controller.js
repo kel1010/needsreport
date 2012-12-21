@@ -21,7 +21,7 @@ function main($scope, $http) {
         $scope.stypes = Array();
 
     	$scope.STATIC_URL = STATIC_URL;        
-        
+
         $scope.infoWin = new google.maps.InfoWindow({
             size: new google.maps.Size(350, 350)
            });
@@ -179,7 +179,7 @@ function main($scope, $http) {
             var marker = new google.maps.Marker({
 				position: latLng,
 				draggable: false,
-				icon: url,
+				icon: url, 
 				clickable: true,
 				map: $scope.map,
 				animation: animation,

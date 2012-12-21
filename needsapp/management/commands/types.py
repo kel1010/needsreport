@@ -9,11 +9,12 @@ class Command(BaseCommand):
             for row in csv.reader(csvfile, delimiter=','):
                 _type = row[0]
                 keyword = row[1]
-                obj = db.types.find_one({'type':_type})
-                if not obj:
-                    obj = {'type':_type, 'keywords':[keyword]}
-                    db.types.save(obj)
-                else:
-                    if not keyword in obj['keywords']:
-                        obj['keywords'].append(keyword)
-                        db.types.save(obj)
+                if _type!='TYPE':
+                    obj = db['types'].find_one({'type':_type})
+                    if not obj:
+                        obj = {'type':_type, 'keywords':[keyword]}
+                        db['types'].save(obj)
+                    else:
+                        if not keyword in obj['keywords']:
+                            obj['keywords'].append(keyword)
+                            db['types'].save(obj)

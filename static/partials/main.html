@@ -32,7 +32,7 @@
 	    <button class="switch" ng-click="showControls()" ng-show="controlsLeft<0">&gt;</button>
 	    <button class="switch" ng-click="hideControls()" ng-show="controlsLeft>=0">&lt;</button>    
     </div>
-	<ul id="types" ng-show="STATIC_URL">
+	<ul id="types" ng-show="TYPES">
 	    <li ng-repeat="type in TYPES">
 	        <label>
 	            <input class="type" type="checkbox" ng-model="stypes[type]" ng-init="stypes[type]=true" ng-change="load()">
