@@ -4,7 +4,7 @@
 
 function main($scope, $http) {
     $http.put("/a/init_data").success(function(res) {
-        $scope.CONTINENTS=['Africa', 'Asia', 'Australia', 'Europe', 'North America', 'South America'];
+    	$scope.CONTINENTS=['Africa', 'Asia', 'Australia', 'Europe', 'North America', 'South America'];
         $scope.TYPE_COLOR = {
             'Education': '#f06697',
             'Health': '#ed2224',
@@ -20,6 +20,8 @@ function main($scope, $http) {
         $scope.map=null;
         $scope.stypes = Array();
 
+    	$scope.STATIC_URL = STATIC_URL;        
+        
         $scope.infoWin = new google.maps.InfoWindow({
             size: new google.maps.Size(350, 350)
            });
@@ -172,7 +174,7 @@ function main($scope, $http) {
         var point = $scope.data[index];
         if (point.loc) {
         	var type = point.type;
-            var url = "images/"+type+(point.value)+".png";
+            var url = STATIC_URL+"images/"+type+(point.value)+".png";
             var latLng = new google.maps.LatLng(point.loc[0], point.loc[1]);            
             var marker = new google.maps.Marker({
 				position: latLng,

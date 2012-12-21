@@ -1,7 +1,4 @@
-from django.conf.urls.defaults import patterns, include, url
-from django.conf import settings
-
-from django.contrib import admin
+from django.conf.urls.defaults import patterns, url
 
 from needsapp import views
  
@@ -26,4 +23,6 @@ urlpatterns = patterns('',
     url(r'^a/init_data$', views.init_data),
     url(r'^a/init_data$', views.init_data),
     url(r'^a/latest_needs', views.latest_needs),
+
+    url(r'^$', views.index),
 )

@@ -5,6 +5,6 @@
 angular.module('needsreport', []).
   config(['$routeProvider', function($routeProvider) {
   $routeProvider.
-      when('', {templateUrl: 'partials/main.html', controller: main}).
+      when('', {templateUrl: STATIC_URL+'partials/main.html', controller: main}).
       otherwise({redirectTo: ''});
 }]);

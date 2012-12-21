@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from django.template.defaultfilters import slugify
 from django.views.decorators.cache import cache_page
+from django.shortcuts import render_to_response
 
 from needsapp.mongodb import db, get_types_map, get_types
 from needsapp.loc_query import geocode
@@ -293,3 +294,7 @@ def latest_needs(request):
         data.reverse()
 
     return HttpResponse(json.dumps(data), content_type='application/json')
+
+def index(request):
+    return render_to_response("index.html", dict(STATIC_URL='/static/'))
+    
