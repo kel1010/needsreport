@@ -145,6 +145,14 @@ function main($scope, $http) {
     	});
     }
 
+    $scope._initMarkerArray = function() {
+    	$scope.markers = Array();
+    	for (var i in $scope.TYPES) {
+    		var type = $scope.TYPES[i];
+    		$scope.markers[type] = Array();
+    	}
+    }
+
     $scope._drawMap = function(start, end) {
         if ($scope.map==null) {
         	var animation = google.maps.Animation.DROP;
@@ -162,11 +170,14 @@ function main($scope, $http) {
             $scope.map = new google.maps.Map(document.getElementById("map"), opts);
         } else {
         	var animation = google.maps.Animation.None;
-            for (var i=0; i<$scope.markers.length; ++i) {
-                $scope.markers[i].setMap(null);
-            }
+        	for (var i in $scope.TYPES) {
+        		var type = $scope.TYPES[i];
+	            for (var j=0; j<$scope.markers[type].length; ++j) {
+	                $scope.markers[type][j].setMap(null);
+	            }
+        	}
         }
-        $scope.markers = Array();
+        $scope._initMarkerArray();
         $scope._drawMarkers(0, animation);
     }
 
@@ -174,20 +185,20 @@ function main($scope, $http) {
         var point = $scope.data[index];
         if (point.loc) {
         	var type = point.type;
-            var url = STATIC_URL+"images/"+type+(point.value)+".png";
+            var icon_url = STATIC_URL+"images/"+type+(point.value)+".png";
             var latLng = new google.maps.LatLng(point.loc[0], point.loc[1]);            
             var marker = new google.maps.Marker({
 				position: latLng,
 				draggable: false,
-				icon: url, 
+				icon: icon_url,
 				clickable: true,
-				map: $scope.map,
-				animation: animation,
+				//animation: animation,
+				title: type
             });
 
             marker.point = point;
             $scope._createMarkerListener(marker);
-            $scope.markers.push(marker);
+            $scope.markers[type].push(marker);            
         }
     }
     
@@ -201,6 +212,10 @@ function main($scope, $http) {
     				$scope._drawMarker(index, animation);
     			}
     		}
+            for (var i in $scope.TYPES) {
+            	var type = $scope.TYPES[i];
+            	new MarkerClusterer($scope.map, $scope.markers[type]);
+            }
     	}
     }
     
