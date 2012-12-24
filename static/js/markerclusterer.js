@@ -152,7 +152,6 @@ ClusterIcon.prototype.onAdd = function () {
 
       // The default click handler follows. Disable it by setting
       // the zoomOnClick property to false.
-      console.log(cClusterIcon.cluster_.markers_.length);
       if (cClusterIcon.cluster_.markers_.length>1) { 
         if (mc.getZoomOnClick()) {
           // Zoom into the cluster.

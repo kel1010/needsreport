@@ -249,7 +249,6 @@ def map_data(request):
 
 def loc_data(request):
     req = json.loads(request.raw_post_data)
-    print req
     loc_place = req['loc_place']
     start = int(req.get('start', 0))
     end = int(req.get('end', time.time()))
