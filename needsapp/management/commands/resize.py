@@ -10,19 +10,22 @@ def save(img, path):
 
 def scale(img, index, prefix):
     width = SIZES[index];
-    height = int(round(width*81.0/67.0))
-    size = (width, height)
-    scaled = img.resize(size, Image.ANTIALIAS)
-    path = '%s%s.png' % (prefix, index)
-    save(scaled, path)
-
-def scale_cluster(img, index, prefix):
-    width = SIZES[index]+20;
     height = width
     size = (width, height)
     scaled = img.resize(size, Image.ANTIALIAS)
-    path = '%s_cluster%s.png' % (prefix, index)
+    path = '%s%s.png' % (prefix, index)
+
+    print width
+    save(scaled, path)
+
+def scale_cluster(img, index, prefix):
+    width = SIZES[index-5]+20;
+    height = width
+    size = (width, height)
+    scaled = img.resize(size, Image.ANTIALIAS)
+    path = '%s%s.png' % (prefix, index)
     
+    print width
     save(scaled, path)
 
 class Command(BaseCommand):
@@ -31,7 +34,7 @@ class Command(BaseCommand):
             prefix = os.path.splitext(infile)[0][1:]
             try:
                 full = Image.open(infile)
-                crop = (35, 32, 35+75, 32+81)
+                crop = (35, 32, 35+81, 32+81)
                 cropped = full.crop(crop)
 
                 scale(cropped.copy(), 1, prefix)
@@ -40,11 +43,11 @@ class Command(BaseCommand):
                 scale(cropped.copy(), 4, prefix)
                 scale(cropped.copy(), 5, prefix)
 
-                scale_cluster(full.copy(), 1, prefix)
-                scale_cluster(full.copy(), 2, prefix)
-                scale_cluster(full.copy(), 3, prefix)
-                scale_cluster(full.copy(), 4, prefix)
-                scale_cluster(full.copy(), 5, prefix)
+                scale_cluster(full.copy(), 6, prefix)
+                scale_cluster(full.copy(), 7, prefix)
+                scale_cluster(full.copy(), 8, prefix)
+                scale_cluster(full.copy(), 9, prefix)
+                scale_cluster(full.copy(), 10, prefix)
 
             except IOError, e:
                 logging.exception(e)

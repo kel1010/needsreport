@@ -152,14 +152,19 @@ ClusterIcon.prototype.onAdd = function () {
 
       // The default click handler follows. Disable it by setting
       // the zoomOnClick property to false.
-      if (mc.getZoomOnClick()) {
-        // Zoom into the cluster.
-        mz = mc.getMaxZoom();
-        mc.getMap().fitBounds(cClusterIcon.cluster_.getBounds());
-        // Don't zoom beyond the max zoom level
-        if (mz !== null && (mc.getMap().getZoom() > mz)) {
-          mc.getMap().setZoom(mz + 1);
+      console.log(cClusterIcon.cluster_.markers_.length);
+      if (cClusterIcon.cluster_.markers_.length>1) { 
+        if (mc.getZoomOnClick()) {
+          // Zoom into the cluster.
+          mz = mc.getMaxZoom();
+          mc.getMap().fitBounds(cClusterIcon.cluster_.getBounds());
+          // Don't zoom beyond the max zoom level
+          if (mz !== null && (mc.getMap().getZoom() > mz)) {
+            mc.getMap().setZoom(mz + 1);
+          }
         }
+      } else {
+    	google.maps.event.trigger(cClusterIcon.cluster_.markers_[0], "click");
       }
 
       // Prevent event propagation to the map:

@@ -136,16 +136,10 @@ function main($scope, $http) {
                 title: 'Needs for '+marker.point.loc_place
             });
             $scope.infoWin.setContent(chartDiv);
-            $scope.infoWin.open(marker.get('map'), marker);
+            $scope.infoWin.open($scope.map, marker);
 		});
     }  
     
-    $scope._createMarkerListener = function(marker) {
-    	google.maps.event.addListener(marker, 'click', function(e) {
-    		$scope._drawChart(marker);
-    	});
-    }
-
     $scope._drawMap = function(start, end) {
         if ($scope.map==null) {
         	var animation = google.maps.Animation.DROP;
@@ -168,10 +162,16 @@ function main($scope, $http) {
         	}
         }
         $scope.clusters = new Array();
-        $scope._drawMarkers();
+        $scope._createMarkers();
     }
 
-    $scope._drawMarker = function(point) {
+    $scope._createMarkerListener = function(marker) {
+    	google.maps.event.addListener(marker, 'click', function(e) {
+    		$scope._drawChart(marker);
+    	});
+    }
+    
+    $scope._createMarker = function(point) {
         if (point.loc) {
         	var type = point.type;
             var icon_url = STATIC_URL+"images/"+type+(point.value)+".png";
@@ -181,29 +181,30 @@ function main($scope, $http) {
 				draggable: false,
 				icon: icon_url,
 				clickable: true,
-				title: type
+				title: type,
             });
             marker.sum = point.sum;
-            
+
             marker.point = point;
             $scope._createMarkerListener(marker);
-            return marker;            
+            return marker;
         }
     }
-   
-    $scope._drawMarkers = function() {
+
+    $scope._createMarkers = function() {
         for (var type in $scope.data) {
         	var markers = new Array();
         	for (var j=0; j<$scope.data[type].length; ++j) {
         		var point = $scope.data[type][j];
-        		markers.push($scope._drawMarker(point));
+        		markers.push($scope._createMarker(point));
         	}
         	$scope.clusters[type] = new MarkerClusterer($scope.map, markers, {
-        		imagePath: $scope.STATIC_URL+"images/"+type+"_cluster",
+        		imagePath: $scope.STATIC_URL+"images/"+type,
         		imageExtension: 'png',
-        		imageSizes: [40,45,50,55,60],
+        		imageSizes: [20,25,30,35,40,40,45,50,55,60],
         		calculator: _markerClustererCalculator,
-        		title: type
+        		title: type,
+        		minimumClusterSize: 1
         	});
         }
     }
@@ -295,9 +296,12 @@ function _markerClustererCalculator(markers, numStyles) {
 		  sum+=markers[i].sum;
 	  }
 
-	  var index = Math.floor(Math.log(sum)/2.303)+1; // convert to base 10 log
-
-	  index = Math.min(index, numStyles);
+	  var index = Math.floor(Math.log(sum)/2.303)+1; // convert to base 10 log		  
+	  if (markers.length==1) {
+		  index = Math.min(index, 5);
+	  } else {
+		  index = Math.min(index, 5) + 5;
+	  }
 
 	  return {
 		  text: sum+'',
