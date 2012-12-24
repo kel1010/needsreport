@@ -5,6 +5,10 @@ from needsapp.contrib.mcache import cache_result
 connection = Connection('localhost', 27017)
 db = connection.needs_db
 
+db.needs = db['needs']
+db.countries = db['countries']
+db.types = db['types']
+
 db.needs.ensure_index([('loc', GEO2D)])
 db.needs.ensure_index('loc_place')
 db.needs.ensure_index('created')

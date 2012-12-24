@@ -47,5 +47,5 @@ class Command(BaseCommand):
             if res:
                 place, loc = res[0]
                 data.update({'loc':loc, 'loc_place':place})
-    
+
             db.needs.insert(data)        

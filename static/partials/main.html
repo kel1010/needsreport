@@ -35,7 +35,7 @@
 	<ul id="types" ng-show="TYPES">
 	    <li ng-repeat="type in TYPES">
 	        <label>
-	            <input class="type" type="checkbox" ng-model="stypes[type]" ng-init="stypes[type]=true" ng-change="load()">
+	            <input class="type" type="checkbox" ng-model="stypes[type]" ng-init="stypes[type]=false" ng-change="load()">
 	            <span>
 	                <img src="{{STATIC_URL}}images/{{type}}2.png"/><br/>
 	                {{type}}

@@ -299,5 +299,9 @@ div#bottom span#number {
     white-space:nowrap; 
 }
 
+div.chart {
+    opacity:0.85;
+    filter:alpha(opacity=85);
+}
 
 </style>

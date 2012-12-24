@@ -105,6 +105,7 @@ function main($scope, $http) {
 		$http.post("/a/loc_data", {loc_place:marker.point.loc_place, start:start/1000, end:end/1000}).success(function(res) {    	
             $scope.infoWin.close();
             var chartDiv = document.createElement("div");
+            chartDiv.class = "chart";
             var chart = new google.visualization.BarChart(chartDiv);
             var data = Array();
             data[0] = Array();
@@ -145,14 +146,6 @@ function main($scope, $http) {
     	});
     }
 
-    $scope._initMarkerArray = function() {
-    	$scope.markers = Array();
-    	for (var i in $scope.TYPES) {
-    		var type = $scope.TYPES[i];
-    		$scope.markers[type] = Array();
-    	}
-    }
-
     $scope._drawMap = function(start, end) {
         if ($scope.map==null) {
         	var animation = google.maps.Animation.DROP;
@@ -170,19 +163,15 @@ function main($scope, $http) {
             $scope.map = new google.maps.Map(document.getElementById("map"), opts);
         } else {
         	var animation = google.maps.Animation.None;
-        	for (var i in $scope.TYPES) {
-        		var type = $scope.TYPES[i];
-	            for (var j=0; j<$scope.markers[type].length; ++j) {
-	                $scope.markers[type][j].setMap(null);
-	            }
+        	for (var type in $scope.clusters) {
+        		$scope.clusters[type].clearMarkers();
         	}
         }
-        $scope._initMarkerArray();
-        $scope._drawMarkers(0, animation);
+        $scope.clusters = new Array();
+        $scope._drawMarkers();
     }
 
-    $scope._drawMarker = function(index, animation) {
-        var point = $scope.data[index];
+    $scope._drawMarker = function(point) {
         if (point.loc) {
         	var type = point.type;
             var icon_url = STATIC_URL+"images/"+type+(point.value)+".png";
@@ -192,33 +181,33 @@ function main($scope, $http) {
 				draggable: false,
 				icon: icon_url,
 				clickable: true,
-				//animation: animation,
 				title: type
             });
-
+            marker.sum = point.sum;
+            
             marker.point = point;
             $scope._createMarkerListener(marker);
-            $scope.markers[type].push(marker);            
+            return marker;            
         }
     }
-    
-    $scope._drawMarkers = function(index, animation) {
-    	if (index<$scope.data.length) {
-    		if (index<50 && animation==google.maps.Animation.DROP) {
-    			$scope._drawMarker(index, animation);
-    			window.setTimeout(function() {$scope._drawMarkers(index+1, animation);}, 100-index*2);
-    		} else {
-    			for (; index<$scope.data.length; ++index) {
-    				$scope._drawMarker(index, animation);
-    			}
-    		}
-            for (var i in $scope.TYPES) {
-            	var type = $scope.TYPES[i];
-            	new MarkerClusterer($scope.map, $scope.markers[type]);
-            }
-    	}
+   
+    $scope._drawMarkers = function() {
+        for (var type in $scope.data) {
+        	var markers = new Array();
+        	for (var j=0; j<$scope.data[type].length; ++j) {
+        		var point = $scope.data[type][j];
+        		markers.push($scope._drawMarker(point));
+        	}
+        	$scope.clusters[type] = new MarkerClusterer($scope.map, markers, {
+        		imagePath: $scope.STATIC_URL+"images/"+type+"_cluster",
+        		imageExtension: 'png',
+        		imageSizes: [40,45,50,55,60],
+        		calculator: _markerClustererCalculator,
+        		title: type
+        	});
+        }
     }
-    
+
     $scope.load = function() {
         $scope._loadData($scope.timeline.xAxis[0].min, $scope.timeline.xAxis[0].max);
     }
@@ -298,3 +287,21 @@ function main($scope, $http) {
     }
     
 }
+
+function _markerClustererCalculator(markers, numStyles) {
+	  var sum = 0;
+
+	  for (var i=0; i<markers.length; ++i) {
+		  sum+=markers[i].sum;
+	  }
+
+	  var index = Math.floor(Math.log(sum)/2.303)+1; // convert to base 10 log
+
+	  index = Math.min(index, numStyles);
+
+	  return {
+		  text: sum+'',
+		  index: index
+	  };
+}
+

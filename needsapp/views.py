@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from django.template.defaultfilters import slugify
 from django.views.decorators.cache import cache_page
+from django.conf import settings
 from django.shortcuts import render_to_response
 
 from needsapp.mongodb import db, get_types_map, get_types
@@ -229,14 +230,17 @@ def map_data(request):
     for doc in res.find():
         locs.append(doc['value'])
 
-    data = []
+    data = {}
     for loc in locs:
         value = int(math.log(loc['sum'], 10))+1
         if value>5:
             value=5
         loc['value'] = value
-        loc['type'] = loc['type'].title()
-        data.append(loc)
+        _type = loc['type'].title()
+        #loc['type'] = loc['type'].title()
+        if _type not in data:
+            data[_type] = list()
+        data[_type].append(loc)
 
     tmp.drop()
     res.drop()
@@ -296,5 +300,5 @@ def latest_needs(request):
     return HttpResponse(json.dumps(data), content_type='application/json')
 
 def index(request):
-    return render_to_response("index.html", dict(STATIC_URL='/static/'))
+    return render_to_response("index.html", dict(STATIC_URL=settings.STATIC_URL, SMS_NUMBER=settings.SMS_NUMBER))
     

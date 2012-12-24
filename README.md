@@ -48,3 +48,9 @@ mongoimport -d needs_db -c countries --jsonArray --file countries.json
 
 will create 1000 needs.  The location are capitals of countries in the countries table.
  
+###Map Cluster###
+
+I am using google map clusterer.  I downloaded the js file locally, but the source along with documents and examples can be found here:
+
+http://google-maps-utility-library-v3.googlecode.com/svn/tags/markerclustererplus/2.0.9/
+
