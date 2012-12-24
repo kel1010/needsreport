@@ -54,3 +54,7 @@ I am using google map clusterer.  I downloaded the js file locally, but the sour
 
 http://google-maps-utility-library-v3.googlecode.com/svn/tags/markerclustererplus/2.0.9/
 
+I changed the code a bit so that when the cluster has only one marker, the click event triggers the marker's click event.
+
+The icons for each needs is number from 1 to 10.  1 to 5 are icons for cluster with only one marker.  6 to 10 are icons for cluster with multiple markers (true clusters). 
+
