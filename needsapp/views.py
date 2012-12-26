@@ -6,6 +6,7 @@ from django.shortcuts import render_to_response
 
 from needsapp.mongodb import db, get_types_map, get_types
 from needsapp.loc_query import geocode
+from needsapp.contrib import validate_twilio
 
 from bson.code import Code
 
@@ -99,7 +100,14 @@ def _too_old(data):
     t = data.get('created', 0)
     return not t or time.time()-t > 3600
 
+@validate_twilio
 def sms(request):
+    signature = request.META.get('HTTP_X_TWILIO_SIGNATURE', None)
+    print signature
+    print request.get_full_path()
+    print request.META
+    print request.POST
+    
     uid = _uid(request)
     data = db['needs'].find_one(dict(_id=uid))
 

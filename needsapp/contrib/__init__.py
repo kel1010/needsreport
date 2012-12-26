@@ -1,13 +1,20 @@
-import re
-from unicodedata import normalize
+from django.conf import settings
+from django.http import HttpResponse
 
-_punct_re = re.compile(r'[\t !"#$%&\'()*\-/<=>?@\[\\\]^_`{|},.]+')
+from twilio.util import RequestValidator
+from functools import wraps
 
-def slugify(text, delim=u'-'):
-    """Generates an slightly worse ASCII-only slug."""
-    result = []
-    for word in _punct_re.split(text.lower()):
-        word = normalize('NFKD', word).encode('ascii', 'ignore')
-        if word:
-            result.append(word)
-    return unicode(delim.join(result))
+def validate_twilio(func):
+    @wraps(func)
+    def dec(request, *args, **kwargs):
+        signature = request.META.get('HTTP_X_TWILIO_SIGNATURE', '')
+        data = dict()
+        for k, v in request.POST.items():
+            data[k] = v
+        validator = RequestValidator(settings.TWILIO_AUTH_TOKEN)
+        if validator.validate(settings.TWILIO_URL, data, signature):
+            return func(request, *args, **kwargs)
+        else:
+            return HttpResponse(status=401)
+        
+    return dec

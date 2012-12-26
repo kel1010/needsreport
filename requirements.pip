@@ -1,4 +1,4 @@
-django==1.4.2
+django==1.4.3
 twilio==3.4.1
 geopy==0.94.2
 python-memcached==1.48
