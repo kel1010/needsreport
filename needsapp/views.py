@@ -148,7 +148,7 @@ def _chart_data():
 
     return data
 
-@cache_page(7200)
+@cache_page(180)
 def init_data(request):
     types = get_types()
     min_time_res = db['needs'].find({'created':{'$exists': True}}).sort('created', 1).limit(1)
@@ -177,7 +177,8 @@ def init_data(request):
 
             continent['countries'].append({'country': country['country'], 'latlng': country['latlng'], 'zoom': 10-pop_log})
 
-    chart_data = _chart_data()
+    chart_data = copy.deepcopy(_chart_data())
+    chart_data.append([int(time.time()*1000), 0])
     params = dict(types=types, min_time=min_time, continents=continents, chart_data=chart_data)
     return HttpResponse(json.dumps(params), content_type='application/json')    
 

@@ -3,6 +3,8 @@
 /* Controllers */
 
 function main($scope, $http) {
+	$scope.STATIC_URL = STATIC_URL;        
+	
     $http.put("/a/init_data").success(function(res) {
     	$scope.CONTINENTS=['Africa', 'Asia', 'Australia', 'Europe', 'North America', 'South America'];
         $scope.TYPE_COLOR = {
@@ -19,8 +21,6 @@ function main($scope, $http) {
         $scope.CONTINENTS=res['continents'];
         $scope.map=null;
         $scope.stypes = Array();
-
-    	$scope.STATIC_URL = STATIC_URL;        
 
         $scope.infoWin = new google.maps.InfoWindow({
             size: new google.maps.Size(350, 350)
@@ -87,7 +87,7 @@ function main($scope, $http) {
                 labels: {enabled: false}
             },            
             rangeSelector: {
-                selected: 0
+                selected: 2
             },
             series: [{
                 name: 'Needs',
