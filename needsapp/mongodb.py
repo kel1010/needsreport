@@ -1,9 +1,10 @@
+from django.conf import settings
 from pymongo import Connection, GEO2D
 
 from needsapp.contrib.mcache import cache_result
 
-connection = Connection('localhost', 27017)
-db = connection.needs_db
+connection = Connection(settings.MONGO_HOST)
+db = connection[settings.MONGO_DB]
 
 db.needs = db['needs']
 db.countries = db['countries']

@@ -1,4 +1,5 @@
 MONGO_DB='needs_db'
+MONGO_HOST='127.0.0.1:27017'
 MONGO_USER=None
 MONGO_PWD=None
 
