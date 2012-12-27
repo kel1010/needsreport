@@ -1,4 +1,6 @@
 "Base Cache class."
+from django.conf import settings
+
 import pymongo
 import bson
 from pymongo.errors import AutoReconnect
@@ -35,12 +37,13 @@ class MongoDBCache(object):
         else:
             port = 27017
         try:
-            database_name = location
+            database_name = settings.MONGO_DB
+            collection_name = location
         except KeyError:
             raise InvalidCacheBackendError('database argument is required')
         self.debug = 'debug' in params
         try:
-            self._cache = pymongo.Connection(server, port)[database_name].cache
+            self._cache = pymongo.Connection(server, port)[database_name][collection_name]
             self._cache.ensure_index('key', unique=True)
             self._cache.ensure_index('created')
         except AutoReconnect:

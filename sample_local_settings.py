@@ -1,0 +1,12 @@
+MONGO_DB='needs_db'
+MONGO_USER=None
+MONGO_PWD=None
+
+TEST_SITE=False
+
+SMS_NUMBER='011-987-654-3210'
+#SMS_NUMBER='+1-917-746-3337'
+
+TWILIO_URL = 'http://nr2.0mc.net/a/sms'
+TWILIO_AUTH_TOKEN = 'xxxx'
+

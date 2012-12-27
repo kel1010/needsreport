@@ -12,6 +12,15 @@ body {
     clear: both;
 }
 
+#test {
+    font-size: 16px;
+	font-weight: bold;
+	text-align: center;
+	padding: 2px;
+	background: white;
+	color: red;
+}
+
 #top {
 	height: 90px;
     background: #55a;
@@ -66,7 +75,7 @@ div#top div#tagline p {
 
 #app {
 	position: relative;
-    height: 600px;
+    height: 710px;
     border-bottom: 4px solid #888;    
 }
 
@@ -74,7 +83,7 @@ div#top div#tagline p {
 	position: absolute;
 	top: 50%;
 	left: 50%;
-	margin: -30px 0 0 -80px;
+	margin: -80px 0 0 -80px;
 	text-align: center;
 	font-weight: bold;
 	font-size: 20px;
@@ -256,8 +265,7 @@ ul#types li label input:checked+span {
 }
 
 div#bottom {
-	position: absolute;
-	top: 820px;
+    margin-top: 20px;
     font-size: 12px;
     margin-bottom: 20px;
 }

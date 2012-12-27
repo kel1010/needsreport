@@ -7,6 +7,11 @@
     <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/app.css"/>
 </head>
 <body>
+    {% if TEST_SITE %}
+	    <div id="test">
+	       This site is for users to test their needs can actually be registered.  Needs displayed below are real needs.
+	    </div>
+    {% endif %}
     <div id="top">
 	    <div id="logo">
 	        <img src="{{STATIC_URL}}images/logo.jpg"/>
@@ -26,6 +31,7 @@
     <div id="app" ng-view>
         <div id="loading"><img src="{{STATIC_URL}}images/loading.gif"><br/>LOADING</div>
     </div>
+    <div class="clear"></div>
     <div id="bottom">
         <div id="about">
         	<h2>About Us</h2>
@@ -78,16 +84,19 @@
         }
     </script>
 	<script type="text/javascript">
-		var _gaq = _gaq || [];
-		_gaq.push(['_setAccount', 'UA-36379320-1']);
-		_gaq.push(['_setDomainName', 'needsreport.org']);
-		_gaq.push(['_trackPageview']);
-		
-		(function() {
-			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-		})();	
+	
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-36379320-1']);
+	  _gaq.push(['_trackPageview']);
+      //_gaq.push(['_setDomainName', 'www.needsreport.org']);
+      //_gaq.push(['_setAllowLinker', true]);
+	
+	  (function() {
+	    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+	    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+	    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	
 	</script>
 </body>
 </html>

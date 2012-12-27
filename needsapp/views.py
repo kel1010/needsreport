@@ -7,6 +7,7 @@ from django.shortcuts import render_to_response
 from needsapp.mongodb import db, get_types_map, get_types
 from needsapp.loc_query import geocode
 from needsapp.contrib import validate_twilio
+from needsapp.contrib.mcache import cache_result
 
 from bson.code import Code
 
@@ -102,12 +103,6 @@ def _too_old(data):
 
 @validate_twilio
 def sms(request):
-    signature = request.META.get('HTTP_X_TWILIO_SIGNATURE', None)
-    print signature
-    print request.get_full_path()
-    print request.META
-    print request.POST
-    
     uid = _uid(request)
     data = db['needs'].find_one(dict(_id=uid))
 
@@ -123,12 +118,13 @@ def _loc_defined(points):
 
     return True
 
+@cache_result(lambda: '', expires=4*3600)
 def _chart_data():
     # this map/reduce groups needs by month
     mapper = Code("""
         function() {
             var d = new Date(this.created*1000);
-            var key = new Date(d.getUTCFullYear(), d.getUTCMonth(), 0, 0, 0, 0).getTime();
+            var key = new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), 0, 0, 0).getTime();
             emit(key, 1);
         }
     """)
@@ -308,5 +304,4 @@ def latest_needs(request):
     return HttpResponse(json.dumps(data), content_type='application/json')
 
 def index(request):
-    return render_to_response("index.html", dict(STATIC_URL=settings.STATIC_URL, SMS_NUMBER=settings.SMS_NUMBER))
-    
+    return render_to_response("index.html", dict(STATIC_URL=settings.STATIC_URL, SMS_NUMBER=settings.SMS_NUMBER, TEST_SITE=settings.TEST_SITE))

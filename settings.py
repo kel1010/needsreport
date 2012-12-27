@@ -154,26 +154,18 @@ CACHES = {
     },
     'location': {
         'BACKEND': 'needsapp.contrib.mongodb_cache.MongoDBCache',
-        'LOCATION': 'needscache_location',
+        'LOCATION': 'cache_location',
         'OPTIONS': {
             'MAX_ENTRIES': 50000,
         }
     },
     'persistent': {
         'BACKEND': 'needsapp.contrib.mongodb_cache.MongoDBCache',
-        'LOCATION': 'needscache_persistent',
+        'LOCATION': 'cache_persistent',
         'OPTIONS': {
             'MAX_ENTRIES': 50000,
         }
     }
 }
 
-MONGO_DB='needs_db'
-MONGO_USER=None
-MONGO_PWD=None
-
-#SMS_NUMBER='011-987-654-3210'
-#SMS_NUMBER='+1-917-746-3337'
-
-TWILIO_URL = 'https://nr2.0mc.net/a/sms'
-TWILIO_AUTH_TOKEN = 'd156eae11820bcdac1a49cc48af3e31b'
+from local_settings import *
