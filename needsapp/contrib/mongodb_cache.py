@@ -25,7 +25,6 @@ class InvalidCacheBackendError(ImproperlyConfigured):
 class MongoDBCache(object):
     def __init__(self, location, params):
         timeout = params.get('TIMEOUT', 300)
-        server = params.get('SERVER', '127.0.0.1')
         try:
             timeout = int(timeout)
         except (ValueError, TypeError):
@@ -43,7 +42,7 @@ class MongoDBCache(object):
             raise InvalidCacheBackendError('database argument is required')
         self.debug = 'debug' in params
         try:
-            self._cache = pymongo.Connection(server, port)[database_name][collection_name]
+            self._cache = pymongo.Connection(settings.MONGO_HOST)[database_name][collection_name]
             self._cache.ensure_index('key', unique=True)
             self._cache.ensure_index('created')
         except AutoReconnect:
