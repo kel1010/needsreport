@@ -30,11 +30,6 @@ class MongoDBCache(object):
         except (ValueError, TypeError):
             timeout = 300
         self.default_timeout = timeout
-        if ':' in server:
-            server, port = server.split(':')
-            port = int(port)
-        else:
-            port = 27017
         try:
             database_name = settings.MONGO_DB
             collection_name = location

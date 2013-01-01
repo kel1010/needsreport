@@ -68,9 +68,9 @@ def _new(request):
 
     if uid:
         if data['country']=='US':
-            r.sms('Thanks for sending in your needs for %s. Where are you located? Please only enter city, state E.g. new york, ny' % _type)
+            r.sms('Thanks for sending in your needs for %s. Where are you located? Please only enter city, state E.g. elmhurst, ny' % _type)
         else:
-            r.sms('Thanks for sending in your needs for %s. Where are you located? Please only enter city, provience, country E.g. istanbul, turkey' % _type)
+            r.sms('Thanks for sending in your needs for %s. Where are you located? Please only enter city, provience E.g. Montreal, Quebec' % _type)
 
     return HttpResponse(str(r))
 
@@ -78,13 +78,13 @@ def _confirm(request, data):
     location = request.REQUEST.get('Body', '')
 
     address = location
-    res = geocode(address)
+    res = geocode(address+','+data['FromCountry'])
 
     r = twiml.Response()
 
     if res:
-        place, loc = res[0]
-        db['needs'].update({'_id':_uid(request)}, {'$set': {'loc':loc, 'loc_place':place, 'loc_input':location}})
+        place, loc, score = res[0]
+        db['needs'].update({'_id':_uid(request)}, {'$set': {'loc':loc, 'loc_place':place, 'loc_input':location, 'loc_score':score}})
 
         count = db['needs'].find({'loc_place':place}).count()
 
