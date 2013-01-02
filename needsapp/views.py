@@ -153,7 +153,7 @@ def init_data(request):
     types = get_types()
     min_time_res = db['needs'].find({'created':{'$exists': True}}).sort('created', 1).limit(1)
     if min_time_res.count()>0:
-        min_time = min_time_res[0]['created']
+        min_time = min_time_res[0]['created'] - 3600*24*7
     else:
         min_time = 1325376000
 
@@ -187,8 +187,11 @@ def map_data(request):
     start = int(req.get('start', 0))
     end = int(req.get('end', time.time()))
     
-    if time.time()-end < 24*3600:
+    if abs(time.time()-end) < 24*3600:
         end=time.time()+1000
+        
+    if abs(time.time()-start) < 24*3600:
+        start = start - 24*3600;        
 
     _types = req.get('types', None)
     condition = {'loc':{'$exists': True}, 'created':{'$lte': end, '$gte': start}}
