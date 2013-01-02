@@ -110,7 +110,6 @@ function ClusterIcon(cluster, styles) {
   this.setMap(cluster.getMap()); // Note: this causes onAdd to be called
 }
 
-
 /**
  * Adds the icon to the DOM.
  */

@@ -305,4 +305,4 @@ def latest_needs(request):
     return HttpResponse(json.dumps(data), content_type='application/json')
 
 def index(request):
-    return render_to_response("index.html", dict(STATIC_URL=settings.STATIC_URL, SMS_NUMBER=settings.SMS_NUMBER, TEST_SITE=settings.TEST_SITE))
+    return render_to_response("index.html", dict(STATIC_URL=settings.STATIC_URL, SMS_NUMBER=settings.SMS_NUMBER, TEST_SITE=settings.TEST_SITE, GA_ID=settings.GA_ID))

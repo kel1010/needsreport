@@ -62,7 +62,9 @@ function main($scope, $http) {
     });
 
     $scope.$on('$viewContentLoaded', function(event) {
-        window._gaq.push(['_trackPageview', window.location.path]);
+    	if (typeof window._gaq) {
+    		window._gaq.push(['_trackPageview', window.location.path]);
+    	}
     });
 
     $scope._initTimeline = function(min_time, chart_data) {
@@ -198,13 +200,22 @@ function main($scope, $http) {
         		var point = $scope.data[type][j];
         		markers.push($scope._createMarker(point));
         	}
+        	var styles = Array();
+        	var sizes = [25,30,35,40,45,45,50,55,60,65];
+        	for (var i=0; i<sizes.length; ++i) {
+        		styles[i] = {
+        			url: $scope.STATIC_URL+"images/"+type+(i+1)+".png",
+        			width: sizes[i],
+        			height: sizes[i],
+        			testSize: 11+i*2,
+        		}
+        	}
         	$scope.clusters[type] = new MarkerClusterer($scope.map, markers, {
-        		imagePath: $scope.STATIC_URL+"images/"+type,
-        		imageExtension: 'png',
-        		imageSizes: [20,25,30,35,40,40,45,50,55,60],
         		calculator: _markerClustererCalculator,
         		title: type,
-        		minimumClusterSize: 1
+        		minimumClusterSize: 1,
+        		printable: true,
+        		styles: styles
         	});
         }
     }
@@ -265,25 +276,25 @@ function main($scope, $http) {
 
     $scope.showControls = function() {
     	var mapDiv = document.getElementById("left");
-    	$scope.controlsLeft += 10;
+    	$scope.controlsLeft += 30;
     	if ($scope.controlsLeft>=0) {
     		$scope.$apply($scope.controlsLeft=0);
         	mapDiv.style.left = $scope.controlsLeft+"px";
     	} else {
         	mapDiv.style.left = $scope.controlsLeft+"px";
-        	window.setTimeout($scope.showControls, 5);
+        	window.setTimeout($scope.showControls, 20);
     	}
     }
 
     $scope.hideControls = function() {
     	var mapDiv = document.getElementById("left");
-    	$scope.controlsLeft -= 20;
+    	$scope.controlsLeft -= 50;
     	if ($scope.controlsLeft<=-250) {
     		$scope.$apply($scope.controlsLeft=-250);
         	mapDiv.style.left = $scope.controlsLeft+"px";
     	} else {
         	mapDiv.style.left = $scope.controlsLeft+"px";
-        	window.setTimeout($scope.hideControls, 5);
+        	window.setTimeout($scope.hideControls, 20);
     	}
     }
     

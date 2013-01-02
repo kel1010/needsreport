@@ -83,13 +83,12 @@
         	e.preventDefault();
         }
     </script>
+    {% if GA_ID %}
 	<script type="text/javascript">
 	
 	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-36379320-1']);
+	  _gaq.push(['_setAccount', '{{GA_ID}}']);
 	  _gaq.push(['_trackPageview']);
-      //_gaq.push(['_setDomainName', 'www.needsreport.org']);
-      //_gaq.push(['_setAllowLinker', true]);
 	
 	  (function() {
 	    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
@@ -98,5 +97,6 @@
 	  })();
 	
 	</script>
+	{% endif %}
 </body>
 </html>
