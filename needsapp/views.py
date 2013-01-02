@@ -153,7 +153,7 @@ def init_data(request):
     types = get_types()
     min_time_res = db['needs'].find({'created':{'$exists': True}}).sort('created', 1).limit(1)
     if min_time_res.count()>0:
-        min_time = min_time_res[0]['created'] - 3600*24*7
+        min_time = min_time_res[0]['created'] - 7*24*3600
     else:
         min_time = 1325376000
 
