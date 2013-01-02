@@ -163,7 +163,7 @@ def init_data(request):
             if 'latlng' not in country or country['latlng']==None:
                 res = geocode(country['country'])
                 if res:
-                    place, latlng = res[0]
+                    place, latlng, score = res
                     country['latlng'] = latlng
                 else:
                     print 'No geocode for: %s' % country['country']

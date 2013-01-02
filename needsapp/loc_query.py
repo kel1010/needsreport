@@ -35,7 +35,6 @@ def geocode(address):
         if 'partial_match' in result:
             score = score - 2.0
         score = score + GEOMETRY_TYPE.get(result['geometry']['location_type'], 0.0)
-        print score
         if score > best_score:
             best_score = score
             best_result = result
