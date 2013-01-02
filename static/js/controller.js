@@ -62,7 +62,7 @@ function main($scope, $http) {
     });
 
     $scope.$on('$viewContentLoaded', function(event) {
-    	if (typeof window._gaq) {
+    	if (typeof window._gaq=='object') {
     		window._gaq.push(['_trackPageview', window.location.path]);
     	}
     });

@@ -78,12 +78,12 @@ def _confirm(request, data):
     location = request.REQUEST.get('Body', '')
 
     address = location
-    res = geocode(address+','+data['FromCountry'])
+    res = geocode(address+','+request.REQUEST['FromCountry'])
 
     r = twiml.Response()
 
     if res:
-        place, loc, score = res[0]
+        place, loc, score = res
         db['needs'].update({'_id':_uid(request)}, {'$set': {'loc':loc, 'loc_place':place, 'loc_input':location, 'loc_score':score}})
 
         count = db['needs'].find({'loc_place':place}).count()
@@ -186,6 +186,10 @@ def map_data(request):
     req = json.loads(request.raw_post_data)
     start = int(req.get('start', 0))
     end = int(req.get('end', time.time()))
+    
+    if time.time()-end < 24*3600:
+        end=time.time()+1000
+
     _types = req.get('types', None)
     condition = {'loc':{'$exists': True}, 'created':{'$lte': end, '$gte': start}}
     if _types:

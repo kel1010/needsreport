@@ -15,7 +15,6 @@ GEOMETRY_TYPE = {"ROOTTOP": 4.0,
                  "GEOMETRIC_CENTER": 1.0,
                  "APPROXIMATE": 0.0} 
 
-
 @cache_result(lambda address: hashlib.md5(address).hexdigest(), expires=7*24*3600, use='location')
 def google_geocode_fetch(address):
     url = BASE_URL % urllib.quote_plus(address)
@@ -40,6 +39,6 @@ def geocode(address):
             best_result = result
 
     if best_result:
-        return best_result['formatted_address'], best_result['geometry']['location'], best_score
+        return best_result['formatted_address'], [best_result['geometry']['location']['lat'], best_result['geometry']['location']['lng']], best_score
     else:
         return None
