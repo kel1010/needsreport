@@ -25,7 +25,7 @@ body {
 	height: 90px;
     background: #55a;
     white-space: nowrap;
-    min-width: 800px;
+    min-width: 900px;
 }
 
 div#logo {
@@ -70,7 +70,7 @@ div#top div#tagline {
 }
 
 div#top div#tagline p {
-	padding-top: 25px;
+	padding-top: 35px;
 }
 
 #app {
