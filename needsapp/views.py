@@ -188,7 +188,7 @@ def map_data(request):
     end = int(req.get('end', time.time()))
     
     if abs(time.time()-end) < 24*3600:
-        end=time.time()+1000
+        end=time.time()+3600
         
     if abs(time.time()-start) < 24*3600:
         start = start - 24*3600;        

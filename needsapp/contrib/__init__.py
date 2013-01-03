@@ -9,7 +9,7 @@ def validate_twilio(func):
     def dec(request, *args, **kwargs):
         signature = request.META.get('HTTP_X_TWILIO_SIGNATURE', '')
         data = dict()
-        for k, v in request.POST.items():
+        for k, v in request.REQUEST.items():
             data[k] = v
         validator = RequestValidator(settings.TWILIO_AUTH_TOKEN)
         if validator.validate(settings.TWILIO_URL, data, signature):
