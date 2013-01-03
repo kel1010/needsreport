@@ -45,7 +45,7 @@ class Command(BaseCommand):
             res = geocode(data['loc_input'])
 
             if res:
-                place, loc = res[0]
-                data.update({'loc':loc, 'loc_place':place})
+                place, loc, score = res
+                data.update({'loc':loc, 'loc_place':place, 'loc_score':score})
 
             db.needs.insert(data)        
