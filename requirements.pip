@@ -3,3 +3,4 @@ twilio==3.4.1
 geopy==0.94.2
 python-memcached==1.48
 pymongo==2.4.1
+python-Levenshtein==0.10.2

@@ -68,9 +68,9 @@ def _new(request):
 
     if uid:
         if data['country']=='US':
-            r.sms('Thanks for sending in your needs for %s. Where are you located? Please only enter city, state E.g. new york, ny' % _type)
+            r.sms('Thanks for sending in your needs for %s. Where are you located? Please only enter city, state E.g. elmhurst, ny' % _type)
         else:
-            r.sms('Thanks for sending in your needs for %s. Where are you located? Please only enter city, provience, country E.g. istanbul, turkey' % _type)
+            r.sms('Thanks for sending in your needs for %s. Where are you located? Please only enter city, provience E.g. Montreal, Quebec' % _type)
 
     return HttpResponse(str(r))
 
@@ -78,13 +78,13 @@ def _confirm(request, data):
     location = request.REQUEST.get('Body', '')
 
     address = location
-    res = geocode(address)
+    res = geocode(address+','+request.REQUEST['FromCountry'])
 
     r = twiml.Response()
 
     if res:
-        place, loc = res[0]
-        db['needs'].update({'_id':_uid(request)}, {'$set': {'loc':loc, 'loc_place':place, 'loc_input':location}})
+        place, loc, score = res
+        db['needs'].update({'_id':_uid(request)}, {'$set': {'loc':loc, 'loc_place':place, 'loc_input':location, 'loc_score':score}})
 
         count = db['needs'].find({'loc_place':place}).count()
 
@@ -153,7 +153,7 @@ def init_data(request):
     types = get_types()
     min_time_res = db['needs'].find({'created':{'$exists': True}}).sort('created', 1).limit(1)
     if min_time_res.count()>0:
-        min_time = min_time_res[0]['created']
+        min_time = min_time_res[0]['created'] - 7*24*3600
     else:
         min_time = 1325376000
 
@@ -163,7 +163,7 @@ def init_data(request):
             if 'latlng' not in country or country['latlng']==None:
                 res = geocode(country['country'])
                 if res:
-                    place, latlng = res[0]
+                    place, latlng, score = res
                     country['latlng'] = latlng
                 else:
                     print 'No geocode for: %s' % country['country']
@@ -186,6 +186,13 @@ def map_data(request):
     req = json.loads(request.raw_post_data)
     start = int(req.get('start', 0))
     end = int(req.get('end', time.time()))
+    
+    if abs(time.time()-end) < 24*3600:
+        end=time.time()+1000
+        
+    if abs(time.time()-start) < 24*3600:
+        start = start - 24*3600;        
+
     _types = req.get('types', None)
     condition = {'loc':{'$exists': True}, 'created':{'$lte': end, '$gte': start}}
     if _types:
@@ -305,4 +312,4 @@ def latest_needs(request):
     return HttpResponse(json.dumps(data), content_type='application/json')
 
 def index(request):
-    return render_to_response("index.html", dict(STATIC_URL=settings.STATIC_URL, SMS_NUMBER=settings.SMS_NUMBER, TEST_SITE=settings.TEST_SITE))
+    return render_to_response("index.html", dict(STATIC_URL=settings.STATIC_URL, SMS_NUMBER=settings.SMS_NUMBER, TEST_SITE=settings.TEST_SITE, GA_ID=settings.GA_ID))

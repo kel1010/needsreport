@@ -3,7 +3,9 @@ from django.core.management.base import BaseCommand
 import os, logging
 import Image
 
-SIZES = {1:20, 2:25, 3:30, 4:35, 5:40}
+IMAGES = ['_Agriculture.png', '_Employment.png', '_Infrastructure.png', '_Water.png', '_Education.png', '_Health.png', '_Sanitation.png']
+
+SIZES = {1:25, 2:30, 3:35, 4:40, 5:45}
 
 def save(img, path):
     img.save(path, 'PNG')
@@ -30,7 +32,8 @@ def scale_cluster(img, index, prefix):
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        for infile in args:
+        images = args if args else IMAGES
+        for infile in images:
             prefix = os.path.splitext(infile)[0][1:]
             try:
                 full = Image.open(infile)
