@@ -168,4 +168,6 @@ CACHES = {
     }
 }
 
+GA_ID = None
+
 from local_settings import *

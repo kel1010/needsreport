@@ -49,7 +49,7 @@ def _new(request):
     data['session'] = number
 
     data['full'] = str(request.REQUEST)
-    data['_id'] = uid_gen(request)
+    data['_id'] = uid_gen()
     data['created'] = time.time()
 
     data['country'] = request.REQUEST.get('FromCountry', None)
@@ -58,7 +58,10 @@ def _new(request):
 
     if uid:
         if data['country']=='US':
-            r.sms('Thanks for sending in your needs for %s. Where are you located? Please only enter city, state E.g. elmhurst, ny' % _type)
+            if _type:
+                r.sms('Thanks for sending in your needs for %s. Where are you located? Please only enter city, state E.g. elmhurst, ny' % _type)
+            else:
+                r.sms('Thanks for sending in your need. Where are you located? Please only enter city, state E.g. elmhurst, ny')
         else:
             r.sms('Thanks for sending in your needs for %s. Where are you located? Please only enter city, provience E.g. Montreal, Quebec' % _type)
 
@@ -76,12 +79,15 @@ def _confirm(request, data):
         place, loc, score = res
         db['needs'].update({'_id':data['_id']}, {'$set': {'loc':loc, 'loc_place':place, 'loc_input':location, 'loc_score':score, 'session': None}})
 
-        count = db['needs'].find({'loc_place':place}).count()
-
-        if count>1:
-            r.sms('There are %s requests for %s in your area.  Hopefully someone will take action.' % (count, data['type'].lower()))
+        if data.get('type', None):
+            count = db['needs'].find({'loc_place':place, 'type':data['type']}).count()
+    
+            if count>1:
+                r.sms('There are %s needs for %s in your area.  Hopefully someone will take action.' % (count, data['type'].lower()))
+            else:
+                r.sms('You are the first person to request for %s in your area.  Thank you!' % data['type'].lower())
         else:
-            r.sms('You are the first person to request for %s in your area.  Thank you!' % data['type'].lower())
+            r.sms('Thank you!  Your need is registered')
     else:
         r.sms('We do not understand where %s is.  Please try again.' % location)
 
