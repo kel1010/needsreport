@@ -12,6 +12,8 @@ from twilio import twiml
 
 import time
 
+EXCLUDE_WORDS = ['', 'needs', 'need', 'want', 'i', 'we', 'us', 'request', 'requests']
+
 def _find_type(text):
     slug = slugify(text)
     m = get_types_map()
@@ -53,6 +55,13 @@ def _new(request):
     data['created'] = time.time()
 
     data['country'] = request.REQUEST.get('FromCountry', None)
+
+    words = set(map(lambda w: w.lower(), request.REQUEST.get('Body', '').split(' ')))
+    for exclude_word in EXCLUDE_WORDS:
+        if exclude_word in words:
+            words.remove(exclude_word)
+
+    data['words'] = list(words)
 
     uid = db['needs'].save(data)
 

@@ -99,7 +99,10 @@ def map_data(request):
     req = json.loads(request.raw_post_data)
     start = int(req.get('start', 0))
     end = int(req.get('end', time.time()))
-    
+    words = set(req.get('words', '').split(','))
+    if '' in words:
+        words.remove('')
+
     if abs(time.time()-end) < 24*3600:
         end=time.time()+3600
         
@@ -108,7 +111,9 @@ def map_data(request):
 
     _types = req.get('types', None)
     condition = {'loc':{'$exists': True}, 'created':{'$lte': end, '$gte': start}}
-    if _types:
+    if words:
+        condition['words'] = {'$in': list(words)}
+    elif _types:
         condition['type'] = {'$in': _types}
 
     # this map/reduce groups needs by location
@@ -161,8 +166,13 @@ def map_data(request):
         if value>5:
             value=5
         loc['value'] = value
-        _type = loc['type'].title()
-        #loc['type'] = loc['type'].title()
+
+        if 'type' in loc and loc['type']:
+            _type = loc['type'].title()
+        elif words:
+            _type = 'Other'
+            loc['type'] = 'Other'
+
         if _type not in data:
             data[_type] = list()
         data[_type].append(loc)
@@ -199,7 +209,10 @@ def loc_data(request):
 
     data = []
     for doc in res.find():
-        data.append(dict(type=doc['_id'], sum=int(doc['value'])))
+        if not doc['_id']:
+            data.append(dict(type='Other', sum=int(doc['value'])))
+        else:
+            data.append(dict(type=doc['_id'], sum=int(doc['value'])))
 
     res.drop()
     data.sort(lambda a,b: b['sum']-a['sum'])

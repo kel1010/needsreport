@@ -3,8 +3,8 @@
 /* Controllers */
 
 function main($scope, $http) {
-	$scope.STATIC_URL = STATIC_URL;        
-	
+	$scope.STATIC_URL = STATIC_URL;
+
     $http.put("/a/init_data").success(function(res) {
     	$scope.CONTINENTS=['Africa', 'Asia', 'Australia', 'Europe', 'North America', 'South America'];
         $scope.TYPE_COLOR = {
@@ -15,17 +15,19 @@ function main($scope, $http) {
             'Water': '#1195cb',
             'Agriculture': '#a1cd3a',
             'Infrastructure': '#ebea62',
-            'Corruption': '#000'
+            'Corruption': '#000',
+            'Other': '#000'
         };
         $scope.TYPES=res['types'];
         $scope.CONTINENTS=res['continents'];
         $scope.map=null;
         $scope.stypes = Array();
+        $scope._setSearchWords();
 
         $scope.infoWin = new google.maps.InfoWindow({
             size: new google.maps.Size(350, 350)
            });
-        
+
         $scope.LAYERS = [
             {
                 name: 'US County',
@@ -67,6 +69,19 @@ function main($scope, $http) {
     	}
     });
 
+    $scope._setSearchWords = function(variable) {
+        var query = window.location.search.substring(1);
+        var vars = query.split('&');
+        for (var i = 0; i < vars.length; i++) {
+            var pair = vars[i].split('=');
+            if (decodeURIComponent(pair[0]) == 'words') {
+                $scope.searchWords=decodeURIComponent(pair[1]);
+                return;
+            }
+        }
+        $scope.searchWords = null;
+    }
+    
     $scope._initTimeline = function(min_time, chart_data) {
     	$scope.timeline = new Highcharts.StockChart({
             chart: {
@@ -152,6 +167,7 @@ function main($scope, $http) {
                 overviewMapControl: true,
                 overviewMapControlOptions: {opened: true},
                 mapTypeControl: false,
+                scrollwheel: false,                
                 streetViewControl: false
                 //panControlOptions: { position: google.maps.ControlPosition.RIGHT_CENTER },
                 //zoomControlOptions: { position: google.maps.ControlPosition.RIGHT_CENTER }
@@ -176,15 +192,17 @@ function main($scope, $http) {
     $scope._createMarker = function(point) {
         if (point.loc) {
         	var type = point.type;
-            var icon_url = STATIC_URL+"images/"+type+(point.value)+".png";
             var latLng = new google.maps.LatLng(point.loc[0], point.loc[1]);            
             var marker = new google.maps.Marker({
 				position: latLng,
 				draggable: false,
-				icon: icon_url,
 				clickable: true,
 				title: type,
             });
+        	if (type!='Other') {
+        		marker.setIcon(STATIC_URL+"images/"+type+(point.value)+".png");
+        	}
+
             marker.sum = point.sum;
 
             marker.point = point;
@@ -232,8 +250,15 @@ function main($scope, $http) {
     		}
     	}
 
-        window.setTimeout(document.getElementById('loading').style.visibility='visible', 500)        
-	    $http.post("/a/map_data", {start: start/1000, end: end/1000, types: types}).success(function(res) {
+        //window.setTimeout(document.getElementById('loading').style.visibility='visible', 500);
+        var queryParams = {start: start/1000, end: end/1000};
+        if ($scope.searchWords!=null) {
+        	queryParams['words'] = $scope.searchWords;
+        	$scope.searchWords = null;
+        } else {
+        	queryParams['types'] = types;
+        }
+	    $http.post("/a/map_data", queryParams).success(function(res) {
 	        $scope.data = res['data'];
 	        $scope._drawMap(start, end);
 	        document.getElementById('loading').style.visibility='hidden';
@@ -307,7 +332,7 @@ function _markerClustererCalculator(markers, numStyles) {
 		  sum+=markers[i].sum;
 	  }
 
-	  var index = Math.floor(Math.log(sum)/2.303)+1; // convert to base 10 log		  
+	  var index = Math.floor(Math.log(sum)/2.303)+1; // convert to base 10 log
 	  if (markers.length==1) {
 		  index = Math.min(index, 5);
 	  } else {
