@@ -1,24 +1,19 @@
 from django.http import HttpResponse
-from django.template.defaultfilters import slugify
 from django.views.decorators.cache import cache_page
 from django.conf import settings
 from django.shortcuts import render_to_response
 
-from needsapp.mongodb import db, get_types_map, get_types
+from needsapp.mongodb import db, get_types
 from needsapp.loc_query import geocode
-from needsapp.contrib import validate_twilio
 from needsapp.contrib.mcache import cache_result
+from needsapp.contrib import uid_gen
 
 from bson.code import Code
-
-from twilio import twiml
 
 import time
 import json
 import math
 import copy
-import base64
-import uuid
 
 CONTINENTS = [
     {'continent': 'Africa', 'latlng': [7.19, 21.10], 'zoom':3, 'abbrev': 'AF', 'countries': []},
@@ -28,88 +23,6 @@ CONTINENTS = [
     {'continent': 'North America', 'latlng': [46.07, -100.55], 'zoom': 3, 'abbrev': 'NA', 'countries': []},
     {'continent': 'South America', 'latlng': [-14.60, -57.66], 'zoom': 3, 'abbrev': 'SA', 'countries': []}
 ];
-
-def uid_gen():
-    return base64.urlsafe_b64encode(uuid.uuid4().bytes)[:-2]
-
-def _find_type(request):
-    slug = slugify(request.REQUEST.get('Body', ''))
-    m = get_types_map()
-    for _type in m.keys():
-        if slug.find(_type.lower())>=0:
-            return m[_type]
-
-def _uid(request):
-    return request.REQUEST['From']
-
-def _new(request):
-
-    r = twiml.Response()
-
-    _type = _find_type(request)
-    if not _type:
-        r.sms('We only support %s needs. Please try again.' % ', '.join(get_types()))
-        return HttpResponse(str(r))
-
-    data = dict()
-
-    data['body'] = request.REQUEST.get('Body', '')
-
-    data['from_num'] = request.REQUEST.get('From', None)
-    data['type'] = _type
-
-    data['full'] = str(request.REQUEST)
-    data['_id'] = _uid(request)
-    data['created'] = time.time()
-
-    data['country'] = request.REQUEST.get('FromCountry', None)
-
-    uid = db['needs'].save(data)
-
-    if uid:
-        if data['country']=='US':
-            r.sms('Thanks for sending in your needs for %s. Where are you located? Please only enter city, state E.g. elmhurst, ny' % _type)
-        else:
-            r.sms('Thanks for sending in your needs for %s. Where are you located? Please only enter city, provience E.g. Montreal, Quebec' % _type)
-
-    return HttpResponse(str(r))
-
-def _confirm(request, data):
-    location = request.REQUEST.get('Body', '')
-
-    address = location
-    res = geocode(address+','+request.REQUEST['FromCountry'])
-
-    r = twiml.Response()
-
-    if res:
-        place, loc, score = res
-        db['needs'].update({'_id':_uid(request)}, {'$set': {'loc':loc, 'loc_place':place, 'loc_input':location, 'loc_score':score}})
-
-        count = db['needs'].find({'loc_place':place}).count()
-
-        if count>1:
-            r.sms('There are %s requests for %s in your area.  Hopefully someone will take action.' % (count, data['type'].lower()))
-        else:
-            r.sms('You are the first person to request for %s in your area.  Thank you!' % data['type'].lower())
-    else:
-        r.sms('We do not understand where %s is.  Please try again.' % location)
-
-    return HttpResponse(str(r))
-
-def _too_old(data):
-    t = data.get('created', 0)
-    return not t or time.time()-t > 3600
-
-@validate_twilio
-def sms(request):
-    uid = _uid(request)
-    data = db['needs'].find_one(dict(_id=uid))
-
-    if not data or _too_old(data) or data.get('loc', None):
-        return _new(request)
-    else:
-        return _confirm(request, data)
 
 def _loc_defined(points):
     for point in points:

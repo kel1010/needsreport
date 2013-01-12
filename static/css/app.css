@@ -150,15 +150,21 @@ button.switch {
     width: 250px;
 }
 
-#controls button.title {
-    font-size: 16px;
-    font-weight: bold;
-    width: 100%;
-    background: #222;
+#controls button {
+    text-align: left;
     color: white;
+    width: 100%;
+    font-size: 16px;
+    margin: 0;
+    border: 0;
+    border-bottom: 1px solid black;    
+}
+
+#controls button.title {
+    font-weight: bold;
+    background: #222;
     text-align: center;
     padding: 6px;
-    border: 0;
 }
 
 #controls ul {
@@ -166,22 +172,12 @@ button.switch {
 }
 
 #controls button.continent, #controls button.layer {
-    width: 100%;
-    font-size: 16px;
     font-weight: bold;
     background: #444;
-    color: white;
-    text-align: left;
-    border:0;
 }
 
 #controls button.country {
-    width: 100%;
-    font-size: 16px;
     background: #666;
-    color: white;
-    text-align: left;
-    border: 0;
 }
 
 #controls ul.countries {

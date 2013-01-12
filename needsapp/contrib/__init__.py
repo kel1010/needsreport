@@ -4,6 +4,9 @@ from django.http import HttpResponse
 from twilio.util import RequestValidator
 from functools import wraps
 
+import base64
+import uuid
+
 def validate_twilio(func):
     @wraps(func)
     def dec(request, *args, **kwargs):
@@ -18,3 +21,7 @@ def validate_twilio(func):
             return HttpResponse(status=401)
         
     return dec
+
+def uid_gen():
+    return base64.urlsafe_b64encode(uuid.uuid4().bytes)[:-2]
+

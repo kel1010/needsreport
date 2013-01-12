@@ -1,6 +1,6 @@
 from django.conf.urls.defaults import patterns, url
 
-from needsapp import views
+from needsapp import views, sms
  
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
@@ -17,7 +17,7 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     # url(r'^admin/', include(admin.site.urls)),
 
-    url(r'^a/sms$', views.sms),
+    url(r'^a/sms$', sms.handle_sms),
     url(r'^a/map_data$', views.map_data),
     url(r'^a/loc_data$', views.loc_data),
     url(r'^a/init_data$', views.init_data),
