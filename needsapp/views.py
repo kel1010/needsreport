@@ -112,7 +112,7 @@ def map_data(request):
     _types = req.get('types', None)
     condition = {'loc':{'$exists': True}, 'created':{'$lte': end, '$gte': start}}
     if words:
-        condition['words'] = {'$in': list(words)}
+        condition['words'] = {'$in': map(lambda word: word.lower().strip(), words)}
     elif _types:
         condition['type'] = {'$in': _types}
 

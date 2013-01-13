@@ -16,7 +16,7 @@ function main($scope, $http) {
             'Agriculture': '#a1cd3a',
             'Infrastructure': '#ebea62',
             'Corruption': '#000',
-            'Other': '#000'
+            'Other': '#b64a47'
         };
         $scope.TYPES=res['types'];
         $scope.CONTINENTS=res['continents'];
@@ -226,6 +226,9 @@ function main($scope, $http) {
         			width: sizes[i],
         			height: sizes[i],
         			testSize: 11+i*2,
+        		};
+        		if (type=='Other') {
+        			styles[i]['textColor'] = '#ccc';
         		}
         	}
         	$scope.clusters[type] = new MarkerClusterer($scope.map, markers, {
@@ -254,7 +257,6 @@ function main($scope, $http) {
         var queryParams = {start: start/1000, end: end/1000};
         if ($scope.searchWords!=null) {
         	queryParams['words'] = $scope.searchWords;
-        	$scope.searchWords = null;
         } else {
         	queryParams['types'] = types;
         }

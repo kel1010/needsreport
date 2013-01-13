@@ -56,7 +56,7 @@ def _new(request):
 
     data['country'] = request.REQUEST.get('FromCountry', None)
 
-    words = set(map(lambda w: w.lower(), request.REQUEST.get('Body', '').split(' ')))
+    words = set(map(lambda w: w.lower().strip(), request.REQUEST.get('Body', '').split(' ')))
     for exclude_word in EXCLUDE_WORDS:
         if exclude_word in words:
             words.remove(exclude_word)
