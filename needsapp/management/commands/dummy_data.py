@@ -26,7 +26,7 @@ class Command(BaseCommand):
             return country
         else:
             return self.random_country()
-    
+
     def handle(self, *args, **options):
         for num in range(0, 1000):
             data = dict()
@@ -35,6 +35,7 @@ class Command(BaseCommand):
             data['type'] = random.choice(get_types())
             data['created'] = self.random_time()
             data['_id'] = uuid.uuid4().hex
+            data['words'] = [data['type'].lower()]
             
             country = self.random_country()
             

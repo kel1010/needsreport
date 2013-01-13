@@ -13,6 +13,7 @@ db.types = db['types']
 db.needs.ensure_index([('loc', GEO2D)])
 db.needs.ensure_index('loc_place')
 db.needs.ensure_index('created')
+db.needs.ensure_index('words')
 
 db.countries.ensure_index('country')
 db.countries.ensure_index('continent')
