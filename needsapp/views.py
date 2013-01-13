@@ -115,6 +115,8 @@ def map_data(request):
         condition['words'] = {'$in': map(lambda word: word.lower().strip(), words)}
     elif _types:
         condition['type'] = {'$in': _types}
+    else:
+        condition['type'] = {'$exists': 1}
 
     # this map/reduce groups needs by location
     mapper = Code("""
@@ -187,6 +189,9 @@ def loc_data(request):
     loc_place = req['loc_place']
     start = int(req.get('start', 0))
     end = int(req.get('end', time.time()))
+    words = set(req.get('words', '').split(','))    
+    if '' in words:
+        words.remove('')
 
     mapper = Code("""
         function() {
@@ -205,6 +210,11 @@ def loc_data(request):
     """)
 
     condition = {'loc_place':loc_place, 'created':{'$lte': end, '$gte': start}}
+    if words:
+        condition['words'] = {'$in': map(lambda word: word.lower().strip(), words)}
+    else:
+        condition['type'] = {'$exists': 1}
+
     res = db['needs'].map_reduce(mapper, reducer, 'tmp_%s' % uid_gen(), query=condition)
 
     data = []

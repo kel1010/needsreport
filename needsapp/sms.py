@@ -12,7 +12,7 @@ from twilio import twiml
 
 import time
 
-EXCLUDE_WORDS = ['', 'needs', 'need', 'want', 'i', 'we', 'us', 'request', 'requests']
+EXCLUDE_WORDS = ['', 'needs', 'need', 'want', 'i', 'we', 'us', 'request', 'requests', 'the', 'and', 'or', 'in', 'to', 'have', 'has']
 
 def _find_type(text):
     slug = slugify(text)
@@ -94,7 +94,7 @@ def _confirm(request, data):
             if count>1:
                 r.sms('There are %s needs for %s in your area.  Hopefully someone will take action.' % (count, data['type'].lower()))
             else:
-                r.sms('You are the first person to request for %s in your area.  Thank you!' % data['type'].lower())
+                r.sms('You are the first person to report the need for %s in your area.  Thank you!' % data['type'].lower())
         else:
             r.sms('Thank you!  Your need is registered')
     else:

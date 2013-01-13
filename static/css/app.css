@@ -247,8 +247,16 @@ ul#types li label {
 ul#types li label span {
     text-align:center;
     font-size: 12px;
-    padding:5px 0px;
-    display:block;
+    padding: 0;
+    display: block;
+    position: relative;
+}
+
+ul#types li label span p {
+	position: absolute;
+	bottom: 0px;
+	left: auto;
+	width: 75px;
 }
 
 ul#types li label input {
