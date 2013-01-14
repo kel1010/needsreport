@@ -118,6 +118,8 @@ def map_data(request):
     else:
         condition['type'] = {'$exists': 1}
 
+    print condition
+
     # this map/reduce groups needs by location
     mapper = Code("""
         function() {
@@ -220,7 +222,8 @@ def loc_data(request):
     data = []
     for doc in res.find():
         if not doc['_id']:
-            data.append(dict(type='Other', sum=int(doc['value'])))
+            if words:
+                data.append(dict(type='Other', sum=int(doc['value'])))
         else:
             data.append(dict(type=doc['_id'], sum=int(doc['value'])))
 

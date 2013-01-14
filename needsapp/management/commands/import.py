@@ -20,12 +20,14 @@ class Command(BaseCommand):
                         if need:
                             data = dict()
                             data['from_num'] = '1111'
-                            data['type'] = sms._find_type(needs[0])
+                            _type = sms._find_type(needs[0])
+                            if _type:
+                                data['type'] = sms._find_type(needs[0])
                             data['_id'] = uid_gen()
-                            data['words'] = need.split(' ')
+                            data['words'] = map(lambda w: w.lower().strip(), need.split(' '))
                             data['loc_input'] = location
                             res = geocode(data['loc_input'])
-                
+
                             if res:
                                 place, loc, score = res
                                 data.update({'loc':loc, 'loc_place':place, 'loc_score':score})                            
