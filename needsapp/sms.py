@@ -12,7 +12,7 @@ from twilio import twiml
 
 import time
 
-EXCLUDE_WORDS = ['', 'needs', 'need', 'want', 'i', 'we', 'us', 'request', 'requests', 'the', 'and', 'or', 'in', 'to', 'have', 'has']
+EXCLUDE_WORDS = ['', 'needs', 'need', 'want', 'i', 'we', 'us', 'request', 'requests', 'the', 'and', 'or', 'in', 'to', 'have', 'has', 'for', 'my']
 
 def _find_type(text):
     slug = slugify(text)
