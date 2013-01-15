@@ -80,7 +80,7 @@ def _confirm(request, data):
     location = request.REQUEST.get('Body', '')
 
     address = location
-    res = geocode(address+','+request.REQUEST['FromCountry'])
+    res = geocode(address.strip().lower(), request.REQUEST.get('FromCountry', '').lower())
 
     r = twiml.Response()
 
