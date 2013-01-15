@@ -16,14 +16,12 @@ GEOMETRY_TYPE = {"ROOTTOP": 4.0,
                  "GEOMETRIC_CENTER": 1.0,
                  "APPROXIMATE": 0.0} 
 
-#@cache_result(lambda: 'a', expires=7*24*3600)
+@cache_result(lambda: 'a', expires=7*24*3600)
 def get_countries():
     res = set()
     for data in db['countries'].find():
         if data.get('country', '').strip():
             res.add(data['country'].lower())
-        if data.get('fips', '').strip():
-            res.add(data['fips'].lower())
     return list(res)
 
 COUNTRIES=get_countries()
