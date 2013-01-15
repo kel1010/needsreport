@@ -126,7 +126,7 @@ function main($scope, $http) {
 		$http.post("/a/loc_data", params).success(function(res) {    	
             $scope.infoWin.close();
             var chartDiv = document.createElement("div");
-            chartDiv.class = "chart";
+            chartDiv.className = "chart";
             var chart = new google.visualization.BarChart(chartDiv);
             var data = Array();
             data[0] = Array();

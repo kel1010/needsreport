@@ -77,10 +77,10 @@
         google.load('visualization', '1', {packages: ['corechart']});
         window.onload = function(e) {
         	var link = document.getElementById("about_link");
-        	link.onclick = function() {
+        	link.onclick = function(e) {
         		window.scrollTo(800,800);
+                e.preventDefault();
         	};
-        	e.preventDefault();
         }
     </script>
     {% if GA_ID %}

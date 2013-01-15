@@ -118,8 +118,6 @@ def map_data(request):
     else:
         condition['type'] = {'$exists': 1}
 
-    print condition
-
     # this map/reduce groups needs by location
     mapper = Code("""
         function() {
