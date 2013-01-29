@@ -159,7 +159,7 @@ function main($scope, $http) {
             $scope.infoWin.setContent(chartDiv);
             $scope.infoWin.open($scope.map, marker);
 		});
-    }  
+    }
     
     $scope._drawMap = function(start, end) {
         if ($scope.map==null) {
@@ -167,11 +167,11 @@ function main($scope, $http) {
             var opts = {
                 zoom: 2,
                 center: new google.maps.LatLng(20, 12),
-                mapTypeId: google.maps.MapTypeId.ROADMAP,
+                mapTypeId: google.maps.MapTypeId.TERRAIN,
                 overviewMapControl: true,
                 overviewMapControlOptions: {opened: true},
                 mapTypeControl: false,
-                scrollwheel: false,                
+                scrollwheel: false,
                 streetViewControl: false
                 //panControlOptions: { position: google.maps.ControlPosition.RIGHT_CENTER },
                 //zoomControlOptions: { position: google.maps.ControlPosition.RIGHT_CENTER }

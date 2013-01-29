@@ -42,11 +42,8 @@ div#top div#buttons {
 
 div#top div#buttons a {
 	float: left;
-	width: 150px;
 	height: 100%;
     background: #55a;
-    border-left: 1px solid #fff;
-    border-right: 1px solid #fff;
     color: #fff;
     font-size: 18px;
     text-decoration:none;
@@ -54,11 +51,26 @@ div#top div#buttons a {
     vertical-align: middle;
 }
 
-div#top div#buttons a p {
+div#top div#buttons a.social_link {
+    width: 80px;
+    margin-right: 50px;	
+}
+
+div#top div#buttons a.social_link img {
+	padding-top: 10px;
+}
+
+div#top div#buttons a#about_link {
+    border-left: 1px solid #fff;
+    border-right: 1px solid #fff;
+    width: 150px;    
+}
+
+div#top div#buttons a#about_link p {
 	padding-top: 35px;
 }
 
-div#top a:hover {
+div#top a#about_link:hover {
     background: #338;	
 }
 
@@ -272,6 +284,19 @@ div#bottom {
     margin-top: 20px;
     font-size: 12px;
     margin-bottom: 20px;
+}
+
+div#bottom div#sponsor {
+	margin-top: 20px;
+}
+
+div#bottom div#sponsor img {
+	float: left;
+}
+
+div#bottom div#sponsor p {
+	margin-left: 80px;
+    font-style:italic
 }
 
 div#bottom div#about {

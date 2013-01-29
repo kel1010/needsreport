@@ -23,6 +23,8 @@
 	       </p>
 	    </div>
 	    <div id="buttons">
+            <a href="https://twitter.com/TheNeedsReport" class="social_link"><img src="{{STATIC_URL}}/images/twitter.png"/></a>
+            <a href="http://www.facebook.com/pages/The-Needs-Report/344576305557174" class="social_link"><img src="{{STATIC_URL}}/images/f_logo.png"/>
             <a href=""#" id="about_link"><p>ABOUT US</p></a>
         </div>
     </div>
@@ -37,15 +39,25 @@
         	<br/>
 	        The Needs Report helps identify the greatest need in communities around the world, so aid and social services organizations can 
 	        move the right resources to the right places, based on what the people living in those communities feel they need the most.
-	        <br/>
+	        <div id="sponsor">
+                <img src="{{STATIC_URL}}images/EWNewLogoGreen.jpg"/>
+                <p>The Needs Report is a fiscally sponsored project of Empowerment WORKS, a 501c3 nonprofit organization.  Donations are tax deductible.</p>
+	        </div>
         </div>
         <div id="text">
 	        <div>
 		        <h2>CREATE A NEED</h2>
 		        <p>
+		             {% if TEST_SITE %}
+		             This is a test site that allows you to have a first look at the features that we are developing for The Needs Report. 
+		             Please try it for yourself! Text {{SMS_NUMBER}} from anywhere in the world to get started – 
+		             just text a need for your community to {{SMS_NUMBER}}, respond to the follow-up text with your location and watch 
+		             your need appear on the map (refresh for faster map update).
+		             {% else %}
 		             Add your need online right now, or text it to <span id="number">{{SMS_NUMBER}}</span> anywhere in the world to get started -
 		             we will automatically add it to the Needs Map, so social service organizations know what the people in your 
 		             community really care about.
+		             {% endif %}
 		         </p>
 	        </div>
 	        <div>
