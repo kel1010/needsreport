@@ -104,7 +104,7 @@ function main($scope, $http) {
                 labels: {enabled: false}
             },            
             rangeSelector: {
-                selected: 2
+                selected: 4
             },
             series: [{
                 name: 'Needs',

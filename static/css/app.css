@@ -25,7 +25,7 @@ body {
 	height: 90px;
     background: #55a;
     white-space: nowrap;
-    min-width: 900px;
+    min-width: 960px;
 }
 
 div#logo {
@@ -52,7 +52,7 @@ div#top div#buttons a {
 }
 
 div#top div#buttons a.social_link {
-    width: 80px;
+    width: 90px;
     margin-right: 50px;	
 }
 
@@ -70,7 +70,7 @@ div#top div#buttons a#about_link p {
 	padding-top: 35px;
 }
 
-div#top a#about_link:hover {
+div#top div#buttons a:hover {
     background: #338;	
 }
 
@@ -305,7 +305,7 @@ div#bottom div#about {
     float: left;
     margin-left: 20px;
     background: #444;
-    padding: 40px;
+    padding: 30px;
     font-size: 14px;
 }
 
