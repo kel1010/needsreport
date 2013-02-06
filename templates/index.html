@@ -48,16 +48,23 @@
 	        <div>
 		        <h2>CREATE A NEED</h2>
 		        <p>
-		             {% if TEST_SITE %}
-		             This is a test site that allows you to have a first look at the features that we are developing for The Needs Report. 
-		             Please try it for yourself! Text {{SMS_NUMBER}} from anywhere in the world to get started – 
-		             just text a need for your community to {{SMS_NUMBER}}, respond to the follow-up text with your location and watch 
-		             your need appear on the map (refresh for faster map update).
-		             {% else %}
-		             Add your need online right now, or text it to <span id="number">{{SMS_NUMBER}}</span> anywhere in the world to get started -
-		             we will automatically add it to the Needs Map, so social service organizations know what the people in your 
-		             community really care about.
-		             {% endif %}
+		            {% if TEST_SITE %}
+		            <p>
+			            This is a test site that allows you to have a first look at the features that we are developing for The Needs Report. 
+			            Please try it for yourself! Text {{SMS_NUMBER}} from anywhere in the world to get started – 
+			            just text a need for your community to {{SMS_NUMBER}}, respond to the follow-up text with your location and watch 
+			            your need appear on the map (refresh for faster map update).
+		            </p>
+		            <br/>
+                    <p>
+                        While you are here, try out the current features of the site.
+                        We welcome any comments or suggestions; please email us with feedback at <a href="mailto:needs.report@gmail.com">needs.report@gmail.com</a>.
+                    </p>
+		            {% else %}
+		            Add your need online right now, or text it to <span id="number">{{SMS_NUMBER}}</span> anywhere in the world to get started -
+		            we will automatically add it to the Needs Map, so social service organizations know what the people in your 
+		            community really care about.
+		            {% endif %}
 		         </p>
 	        </div>
 	        <div>
