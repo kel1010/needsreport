@@ -25,4 +25,6 @@ urlpatterns = patterns('',
     url(r'^a/latest_needs', views.latest_needs),
 
     url(r'^$', views.index),
+    url(r'^robots.txt$', views.robots),    
 )
+
