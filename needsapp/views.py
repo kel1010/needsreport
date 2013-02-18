@@ -61,6 +61,12 @@ def _chart_data():
 
     return data
 
+def robots(request):
+    content = 'User-agent: *'
+    if getattr(settings, 'TEST_SITE', False):
+        content = content+'\r\nDisallow: /'
+    return HttpResponse(content, content_type='text/plain')
+
 @cache_page(180)
 def init_data(request):
     types = get_types()
