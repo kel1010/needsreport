@@ -188,7 +188,7 @@ function main($scope, $http) {
     }
 
     $scope._createMarkerListener = function(marker) {
-    	google.maps.event.addListener(marker, 'click', function(e) {
+    	google.maps.event.addListener(marker, "click", function(e) {
     		$scope._drawChart(marker);
     	});
     }
