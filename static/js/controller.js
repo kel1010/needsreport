@@ -188,8 +188,11 @@ function main($scope, $http) {
     }
 
     $scope._createMarkerListener = function(marker) {
-    	google.maps.event.addListener(marker, 'click', function(e) {
+    	google.maps.event.addListener(marker, "mouseover", function(e) {
     		$scope._drawChart(marker);
+    	});
+    	google.maps.event.addListener(marker, "mouseout", function(e) {
+    		$scope.infoWin.close();
     	});
     }
     

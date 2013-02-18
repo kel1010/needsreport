@@ -181,7 +181,11 @@ ClusterIcon.prototype.onAdd = function () {
      * @param {Cluster} c The cluster that the mouse moved over.
      * @event
      */
-    google.maps.event.trigger(mc, "mouseover", cClusterIcon.cluster_);
+    if (cClusterIcon.cluster_.markers_.length>1) { 
+        google.maps.event.trigger(mc, "mouseover", cClusterIcon.cluster_);    	
+    } else {
+    	google.maps.event.trigger(cClusterIcon.cluster_.markers_[0], "mouseover");    	
+    }
   });
 
   google.maps.event.addDomListener(this.div_, "mouseout", function () {
@@ -192,7 +196,11 @@ ClusterIcon.prototype.onAdd = function () {
      * @param {Cluster} c The cluster that the mouse moved out of.
      * @event
      */
-    google.maps.event.trigger(mc, "mouseout", cClusterIcon.cluster_);
+    if (cClusterIcon.cluster_.markers_.length>1) { 
+        google.maps.event.trigger(mc, "mouseout", cClusterIcon.cluster_);    	
+    } else {
+    	google.maps.event.trigger(cClusterIcon.cluster_.markers_[0], "mouseout");    	
+    }
   });
 };
 
