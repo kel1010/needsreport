@@ -169,5 +169,6 @@ CACHES = {
 }
 
 GA_ID = None
+EMAIL = 'needs.report@gmail.com'
 
 from local_settings import *

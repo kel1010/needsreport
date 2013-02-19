@@ -2,6 +2,7 @@ from django.http import HttpResponse
 from django.views.decorators.cache import cache_page
 from django.conf import settings
 from django.shortcuts import render_to_response
+from django.utils.html import conditional_escape
 
 from needsapp.mongodb import db, get_types
 from needsapp.loc_query import geocode
@@ -14,6 +15,7 @@ import time
 import json
 import math
 import copy
+import re
 
 CONTINENTS = [
     {'continent': 'Africa', 'latlng': [7.19, 21.10], 'zoom':3, 'abbrev': 'AF', 'countries': []},
@@ -254,5 +256,38 @@ def latest_needs(request):
 
     return HttpResponse(json.dumps(data), content_type='application/json')
 
+def _email_enc(email, linktext=None, autoescape=None):
+    """
+    Given a string representing an email address,
+    returns a mailto link with rot13 JavaScript obfuscation.
+
+    Accepts an optional argument to use as the link text;
+    otherwise uses the email address itself.
+    """
+    if autoescape:
+        esc = conditional_escape
+    else:
+        esc = lambda x: x
+
+    email = re.sub('@','\\\\100', re.sub('\.', '\\\\056', \
+        esc(email))).encode('rot13')
+
+    if linktext:
+        linktext = esc(linktext).encode('rot13')
+    else:
+        linktext = email
+
+    rotten_link = """<script type="text/javascript">document.write \
+        ("<n uers=\\\"znvygb:%s\\\">%s<\\057n>".replace(/[a-zA-Z]/g, \
+        function(c){return String.fromCharCode((c<="Z"?90:122)>=\
+        (c=c.charCodeAt(0)+13)?c:c-26);}));</script>""" % (email, linktext)
+    return rotten_link
+
 def index(request):
-    return render_to_response("index.html", dict(STATIC_URL=settings.STATIC_URL, SMS_NUMBER=settings.SMS_NUMBER, TEST_SITE=settings.TEST_SITE, GA_ID=settings.GA_ID))
+    params = dict(STATIC_URL=settings.STATIC_URL, 
+        SMS_NUMBER=settings.SMS_NUMBER, 
+        TEST_SITE=settings.TEST_SITE, 
+        GA_ID=settings.GA_ID,
+        email=_email_enc(settings.EMAIL))
+
+    return render_to_response("index.html", params)
