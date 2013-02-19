@@ -239,7 +239,7 @@ function main($scope, $http) {
         	}
         	$scope.clusters[type] = new MarkerClusterer($scope.map, markers, {
         		calculator: _markerClustererCalculator,
-        		title: type+' (click to expand)',
+        		title: type,
         		minimumClusterSize: 1,
         		printable: true,
         		styles: styles
