@@ -1,4 +1,4 @@
-<div id="loading" ng-show="STATIC_URL"><img src="{{STATIC_URL}}images/loading.gif"><br/>LOADING</div>
+<div id="loading" ng-show="STATIC_URL"><img ng-src="{{STATIC_URL}}images/loading.gif"><br/>LOADING</div>
 <div id="main">
     <div id="map"></div>
 	<div id="left" ng-init="control='locations'; controlsLeft=-250" >
@@ -22,11 +22,11 @@
 		    </ul>
 		    <button class="title" ng-click="control='values'">VALUES</button>
 		    <ul id="values" ng-show="control=='values'" class="content">
-		        <li><table><tr><td><img src="{{STATIC_URL}}images/Water1.png"/></td></tr></table><p>1 - 9 reports</p></li>
-		        <li><table><tr><td><div class="img"><img src="{{STATIC_URL}}images/Water2.png"/></td></tr></table><p>10 - 99 reports</p></li>
-		        <li><table><tr><td><div class="img"><img src="{{STATIC_URL}}images/Water3.png"/></td></tr></table><p>100 - 999 reports</p></li>
-		        <li><table><tr><td><div class="img"><img src="{{STATIC_URL}}images/Water4.png"/></td></tr></table><p>1000 - 9999 reports</p></li>
-		        <li><table><tr><td><div class="img"><img src="{{STATIC_URL}}images/Water5.png"/></td></tr></table><p>10000+ reports</p></li>
+		        <li><table><tr><td><img ng-src="{{STATIC_URL}}images/Water1.png"/></td></tr></table><p>1 - 9 reports</p></li>
+		        <li><table><tr><td><div class="img"><img ng-src="{{STATIC_URL}}images/Water2.png"/></td></tr></table><p>10 - 99 reports</p></li>
+		        <li><table><tr><td><div class="img"><img ng-src="{{STATIC_URL}}images/Water3.png"/></td></tr></table><p>100 - 999 reports</p></li>
+		        <li><table><tr><td><div class="img"><img ng-src="{{STATIC_URL}}images/Water4.png"/></td></tr></table><p>1000 - 9999 reports</p></li>
+		        <li><table><tr><td><div class="img"><img ng-src="{{STATIC_URL}}images/Water5.png"/></td></tr></table><p>10000+ reports</p></li>
 		    </ul>
 	    </div>
 	    <button class="switch" ng-click="showControls()" ng-show="controlsLeft<0">&gt;</button>
@@ -37,7 +37,7 @@
 	        <label>
 	            <input class="type" type="checkbox" ng-model="stypes[type]" ng-init="stypes[type]=false" ng-change="load()">
 	            <span>
-	                <img src="{{STATIC_URL}}images/{{type}}6.png"/>
+	                <img ng-src="{{STATIC_URL}}images/{{type}}6.png"/>
 	                <p>{{type}}</p>
 	            </span>
 	        </label>
