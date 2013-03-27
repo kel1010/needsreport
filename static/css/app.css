@@ -336,9 +336,15 @@ div#bottom span#number {
     white-space:nowrap; 
 }
 
+div#bottom div#donate {
+    margin-top: 20px;
+    float: left;
+}
+
 div.chart {
     opacity:0.85;
     filter:alpha(opacity=85);
 }
+
 
 </style>

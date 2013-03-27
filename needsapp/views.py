@@ -69,7 +69,7 @@ def robots(request):
         content = content+'\r\nDisallow: /'
     return HttpResponse(content, content_type='text/plain')
 
-@cache_page(180)
+#@cache_page(180)
 def init_data(request):
     types = get_types()
     min_time_res = db['needs'].find({'created':{'$exists': True}}).sort('created', 1).limit(1)
@@ -130,17 +130,17 @@ def map_data(request):
     mapper = Code("""
         function() {
             var key = this.type+this.loc_place;
-            emit(key, {sum:1, type:this.type, loc:this.loc, loc_place:this.loc_place});
+            emit(key, {sum:1, type:this.type, loc:this.loc, loc_place:this.loc_place, country: this.country});
         }
     """)
 
     reducer = Code("""
         function(key, values) {
-            var sum = 0;
+            var sum = 0.0;
             for (var i = 0; i < values.length; i++) {
                 sum += values[i].sum;
             }
-            return {sum: sum, type: values[0].type, loc: values[0].loc, loc_place: values[0].loc_place}
+            return {sum: sum, type: values[0].type, loc: values[0].loc, loc_place: values[0].loc_place, country: values[0].country}
         }
     """)
 
@@ -179,7 +179,7 @@ def map_data(request):
 
         if 'type' in loc and loc['type']:
             _type = loc['type'].title()
-        elif words:
+        else:
             _type = 'Other'
             loc['type'] = 'Other'
 
@@ -189,12 +189,12 @@ def map_data(request):
 
     tmp.drop()
     res.drop()
-
+    
     return HttpResponse(json.dumps(dict(types=get_types(), data=data)), content_type='application/json')
 
 def loc_data(request):
     req = json.loads(request.raw_post_data)
-    loc_place = req['loc_place']
+    loc_places = req['loc_places']
     start = int(req.get('start', 0))
     end = int(req.get('end', time.time()))
     words = set(req.get('words', '').split(','))    
@@ -217,7 +217,7 @@ def loc_data(request):
         }
     """)
 
-    condition = {'loc_place':loc_place, 'created':{'$lte': end, '$gte': start}}
+    condition = {'loc_place': {'$in': loc_places}, 'created':{'$lte': end, '$gte': start}}
     if words:
         condition['words'] = {'$in': map(lambda word: word.lower().strip(), words)}
     else:

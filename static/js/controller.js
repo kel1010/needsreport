@@ -116,10 +116,14 @@ function main($scope, $http) {
 
     }
 
-    $scope._drawChart = function(marker) {
+    $scope._drawChart = function(markers) {
     	var start = $scope.timeline.xAxis[0].min;
     	var end = $scope.timeline.xAxis[0].max;
-    	var params = {loc_place:marker.point.loc_place, start:start/1000, end:end/1000};
+    	var loc_places = Array();
+    	for (var i=0; i<markers.length; ++i) {
+    		loc_places.push(markers[i].point.loc_place);
+    	}
+    	var params = {loc_places:loc_places, start:start/1000, end:end/1000};
     	if ($scope.searchWords!=null) {
     		params['words'] = $scope.searchWords;
     	}
@@ -148,19 +152,24 @@ function main($scope, $http) {
                     }
                 }
             }
+            if (markers.length==1) {
+            	var title = 'Needs for '+markers[0].point.loc_place;
+            } else {
+            	var title = null;
+            }
             chart.draw(google.visualization.arrayToDataTable(data), {
                 width: 300,
                 height: 200,
                 legend: {position: 'none'},
                 isStacked: true,
                 colors: colors,
-                title: 'Needs for '+marker.point.loc_place
+                title: title
             });
             $scope.infoWin.setContent(chartDiv);
-            $scope.infoWin.open($scope.map, marker);
+            $scope.infoWin.open($scope.map, markers[0]);
 		});
     }
-    
+
     $scope._drawMap = function(start, end) {
         if ($scope.map==null) {
         	var animation = google.maps.Animation.DROP;
@@ -189,13 +198,13 @@ function main($scope, $http) {
 
     $scope._createMarkerListener = function(marker) {
     	google.maps.event.addListener(marker, "mouseover", function(e) {
-    		$scope._drawChart(marker);
+    		$scope._drawChart([marker]);
     	});
     	google.maps.event.addListener(marker, "mouseout", function(e) {
     		$scope.infoWin.close();
     	});
     }
-    
+
     $scope._createMarker = function(point) {
         if (point.loc) {
         	var type = point.type;
@@ -211,6 +220,7 @@ function main($scope, $http) {
             marker.sum = point.sum;
 
             marker.point = point;
+            marker.country = point.country;
         	$scope._createMarkerListener(marker);
 
         	return marker;
@@ -244,6 +254,13 @@ function main($scope, $http) {
         		printable: true,
         		styles: styles
         	});
+        	
+        	google.maps.event.addListener($scope.clusters[type], 'mouseover', function(mc) {
+        		$scope._drawChart(mc.getMarkers());
+        	});
+        	google.maps.event.addListener($scope.clusters[type], "mouseout", function(e) {
+        		$scope.infoWin.close();
+        	});        	
         }
     }
 

@@ -1417,16 +1417,18 @@ MarkerClusterer.prototype.isMarkerInBounds_ = function (marker, bounds) {
  */
 MarkerClusterer.prototype.addToClosestCluster_ = function (marker) {
   var i, d, cluster, center;
-  var distance = 40000; // Some large number
+  var distance = 25000; // Some large number
   var clusterToAddTo = null;
   for (i = 0; i < this.clusters_.length; i++) {
     cluster = this.clusters_[i];
-    center = cluster.getCenter();
-    if (center) {
-      d = this.distanceBetweenPoints_(center, marker.getPosition());
-      if (d < distance) {
-        distance = d;
-        clusterToAddTo = cluster;
+    if (cluster.country == marker.country) {
+      center = cluster.getCenter();
+      if (center) {
+        d = this.distanceBetweenPoints_(center, marker.getPosition());
+        if (d < distance) {
+          distance = d;
+          clusterToAddTo = cluster;
+        }
       }
     }
   }
@@ -1436,6 +1438,7 @@ MarkerClusterer.prototype.addToClosestCluster_ = function (marker) {
   } else {
     cluster = new Cluster(this);
     cluster.addMarker(marker);
+    cluster.country = marker.country;
     this.clusters_.push(cluster);
   }
 };

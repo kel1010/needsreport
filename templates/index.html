@@ -11,7 +11,7 @@
     {% if TEST_SITE %}
 	    <div id="test">
 			This site is used for testing. Users can send in texts to (917)
-			746-3331 to try the test platform. The data below is not accurate.	    
+			746-3331 to try the test platform. 	    
 	    </div>
     {% endif %}
     <div id="top">
@@ -76,10 +76,14 @@
 					distilling information into helpful reports for aid workers and social
 					services organizations.
 		        </p>
+		        <br/><br/>
+	        </div>
+	        <br/>
+	        <div id="donate">
+	            <a class="wepay-widget-button wepay-green" id="wepay_widget_anchor_514a6a855adf2" href="https://www.wepay.com/donations/105549">Donate</a>
 	        </div>
         </div>
 	    <div class="clear"></div>
-	    <br/>
     </div>
     <script type="text/javascript">
         var STATIC_URL = "{{STATIC_URL}}";
@@ -94,6 +98,8 @@
 	<script type="text/javascript" src="//code.highcharts.com/stock/highstock.js"></script>
 	<script type="text/javascript" src="{{STATIC_URL}}js/highcharttheme.js"></script>	
     <script type="text/javascript">
+        var WePay = WePay || {};WePay.load_widgets = WePay.load_widgets || function() { };
+        WePay.widgets = WePay.widgets || [];WePay.widgets.push( {object_id: 105549,widget_type: "donation_campaign",anchor_id: "wepay_widget_anchor_514a6a855adf2",widget_options: {donor_chooses: true,allow_cover_fee: true,enable_recurring: true,allow_anonymous: true,button_text: "Donate"}});if (!WePay.script) {WePay.script = document.createElement('script');WePay.script.type = 'text/javascript';WePay.script.async = true;WePay.script.src = 'https://static.wepay.com/min/js/widgets.v2.js';var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(WePay.script, s);} else if (WePay.load_widgets) {WePay.load_widgets();}    
         google.load('visualization', '1', {packages: ['corechart']});
         window.onload = function(e) {
         	var link = document.getElementById("about_link");
