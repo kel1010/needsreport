@@ -69,7 +69,7 @@ def robots(request):
         content = content+'\r\nDisallow: /'
     return HttpResponse(content, content_type='text/plain')
 
-#@cache_page(180)
+@cache_page(180)
 def init_data(request):
     types = get_types()
     min_time_res = db['needs'].find({'created':{'$exists': True}}).sort('created', 1).limit(1)
@@ -103,6 +103,7 @@ def init_data(request):
     params = dict(types=types, min_time=min_time, continents=continents, chart_data=chart_data)
     return HttpResponse(json.dumps(params), content_type='application/json')    
 
+@cache_page(5)
 def map_data(request):
     req = json.loads(request.raw_post_data)
     start = int(req.get('start', 0))
@@ -189,7 +190,7 @@ def map_data(request):
 
     tmp.drop()
     res.drop()
-    
+
     return HttpResponse(json.dumps(dict(types=get_types(), data=data)), content_type='application/json')
 
 def loc_data(request):
