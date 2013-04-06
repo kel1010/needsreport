@@ -1,6 +1,6 @@
 django==1.4.3
 twilio==3.4.1
-geopy==0.94.2
+geopy==0.95.1
 python-memcached==1.48
 pymongo==2.4.1
 python-Levenshtein==0.10.2
